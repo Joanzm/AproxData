@@ -27,29 +27,20 @@ class FileInfo(QObject):
         return os.path.basename(self.__filepath)
 
     @Property(float, notify=properties_changed)
-    def file_size(self) -> float:
+    def fileSize(self) -> float:
         return os.path.getsize(self.__filepath) / 1000 # in KB
     
     @Property(str, notify=properties_changed)
-    def create_date(self) -> str:
+    def createDate(self) -> str:
         seconds = os.path.getctime(self.__filepath)
         return time.ctime(seconds)
 
     @Property(str, notify=properties_changed)
-    def last_edit_date(self) -> str:
+    def lastEditDate(self) -> str:
         seconds = os.path.getmtime(self.__filepath)
         return time.ctime(seconds)
 
-class FloatPoint:
-
-    def __init__(self, x: float, y: float) -> None:
-        self._x = x
-        self._y = y
-
-    @Property(float)
-    def x(self) -> float:
-        return self._x
-
-    @Property(float)
-    def y(self) -> float:
-        return self._y
+    @Property(str, notify=properties_changed)
+    def strDisplay(self) -> str:
+        return "Filepath: {}\nFilesize: {} KB\nCreate date: {}\nLast edit date: {}".format(
+            self.filepath, self.fileSize, self.createDate, self.lastEditDate)

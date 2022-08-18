@@ -48,17 +48,18 @@ ApplicationWindow {
             Layout.fillWidth: true; Layout.fillHeight: true
         }
 
-        FileInfoView {
-            partModel: mainmodel
-            Layout.minimumWidth: 100; Layout.minimumHeight: 50
-            Layout.preferredWidth: 100; Layout.preferredHeight: 50
-            Layout.fillWidth: true; Layout.fillHeight: true
-        }
+        // FileInfoView {
+        //     partModel: mainmodel
+        //     Layout.minimumWidth: 100; Layout.minimumHeight: 65
+        //     Layout.preferredWidth: 100; Layout.preferredHeight: 50
+        //     Layout.fillWidth: true; Layout.fillHeight: true
+        // }
 
         CellDataChartView {
             partModel: mainmodel
-            Layout.minimumWidth: 100; Layout.minimumHeight: 50
-            Layout.preferredWidth: 80; Layout.preferredHeight: 50
+            Layout.minimumWidth: 100; Layout.minimumHeight: 85
+            Layout.preferredWidth: 80; Layout.preferredHeight: 80
+            Layout.columnSpan: 2
             Layout.fillWidth: true; Layout.fillHeight: true
         }
     }

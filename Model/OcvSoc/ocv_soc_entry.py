@@ -1,7 +1,6 @@
 from PySide6.QtCore import QPointF, Signal, Property
 
 from Model.Abstract.abc_entry import AbcEntry
-from Model.basic_models import FloatPoint
 
 class OcvSocEntry(AbcEntry):
     """

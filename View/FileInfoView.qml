@@ -10,12 +10,12 @@ ColumnLayout {
         text: partModel.selectedValue == null ? "" : qsTr("Filepath: ") + partModel.selectedValue.fileinfo.filepath
     }
     Text {
-        text: partModel.selectedValue == null ? "" : qsTr("Filesize: ") + partModel.selectedValue.fileinfo.file_size + qsTr(" KB")
+        text: partModel.selectedValue == null ? "" : qsTr("Filesize: ") + partModel.selectedValue.fileinfo.fileSize + qsTr(" KB")
     }
     Text {
-        text: partModel.selectedValue == null ? "" : qsTr("Create date: ") + partModel.selectedValue.fileinfo.create_date
+        text: partModel.selectedValue == null ? "" : qsTr("Create date: ") + partModel.selectedValue.fileinfo.createDate
     }
     Text {
-        text: partModel.selectedValue == null ? "" : qsTr("Last edit date: ") + partModel.selectedValue.fileinfo.last_edit_date
+        text: partModel.selectedValue == null ? "" : qsTr("Last edit date: ") + partModel.selectedValue.fileinfo.lastEditDate
     }
 }

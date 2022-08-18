@@ -38,6 +38,9 @@ class AbcCellData(QObject, Generic[T]):
     def delete_entry(self, row: int):
         del self._celldata[row]
 
+    def clearData(self):
+        self._celldata.clear()
+
     def data_length(self) -> int:
         return len(self._celldata)
 

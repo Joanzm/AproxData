@@ -159,13 +159,14 @@ class CellDataAnalyzerModel(QAbstractListModel):
 
     @Slot(int)
     def reload_single_element_by_index(self, index: int) -> None:
-        self.reload_single_element(self._celldata[index])
+        if (index >= 0 and index < len(self._celldata)):
+            self.reload_single_element(self._celldata[index])
 
     @Slot(AbcCellData)
-    def reload_single_element(self, object: AbcCellData) -> None:
+    def reload_single_element(self, obj: AbcCellData) -> None:
         if (self.__worker is None or self.__worker.isFinished()):
-            if (object is not None):
-                self.__start_worker__([object.fileinfo.filepath])
+            if (obj is not None):
+                self.__start_worker__([obj.fileinfo.filepath])
 
     def __start_worker__(self, filepaths: List[str]):
         self.__worker = LoadXlsFileWorker(filepaths)
@@ -175,6 +176,7 @@ class CellDataAnalyzerModel(QAbstractListModel):
         self.__worker.start(QThread.LowestPriority)
         self.workerStateChanged.emit()
         self._clearDataView()
+        self._clearGraphView()
     
     @Slot(str)
     def __worker_startReadingFile(self, filepath: str):
@@ -185,6 +187,8 @@ class CellDataAnalyzerModel(QAbstractListModel):
         dataObj = self.get_celldata_object(filepath)
         if dataObj is not None:
             try:
+                # clear data before adding new elements
+                dataObj.clearData()
                 # data[0][0] is the highest capacity of the data
                 for valuePair in data:
                     dataObj.add_values(valuePair[1], valuePair[0])
@@ -194,6 +198,7 @@ class CellDataAnalyzerModel(QAbstractListModel):
 
                 self.workerStateChanged.emit()
                 self._updateDataView()
+                self._updateGraphView()
             except Exception as e:
                 dataObj.processException = e
 
