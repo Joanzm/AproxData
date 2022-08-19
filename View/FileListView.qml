@@ -25,8 +25,8 @@ ColumnLayout {
         ListView {
             id: _lv
             spacing: 5
-            model: partModel
-            currentIndex: partModel.selectedIndex
+            model: partModel.model
+            currentIndex: partModel.model.selectedIndex
             delegate: Item {
                 id: _lvItem
                 width: ListView.view.width
@@ -35,7 +35,7 @@ ColumnLayout {
                 MouseArea {
                     id: _itemArea
                     anchors.fill: parent
-                    onClicked: partModel.selectedIndex = index
+                    onClicked: partModel.model.selectedIndex = index
                     hoverEnabled: true
 
                     Rectangle {

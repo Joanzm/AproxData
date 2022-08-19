@@ -41,7 +41,7 @@ class AbcCellData(QObject, Generic[T]):
     def clearData(self):
         self._celldata.clear()
 
-    def data_length(self) -> int:
+    def dataLength(self) -> int:
         return len(self._celldata)
 
     @Property(FileInfo, notify=fileinfoChanged)
