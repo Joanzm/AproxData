@@ -10,17 +10,17 @@ ScrollView {
     ScrollBar.vertical.policy: ScrollBar.AsNeeded
 
     TableView {
-        id: cellDataView
-        model: partModel.celldataview
+        id: table
+        model: partModel.cellDataView
         
         columnWidthProvider: function (column) { 
-            return cellDataView.model ? cellDataView.width/cellDataView.model.columnCount() : 0
+            return table.model ? table.width/table.model.columnCount() : 0
         }
-        onWidthChanged: cellDataView.forceLayout()
+        onWidthChanged: table.forceLayout()
 
         delegate: Rectangle {
             border.width: 1
-            implicitWidth: cellDataView.columnWidthProvider(column)
+            implicitWidth: table.columnWidthProvider(column)
             implicitHeight: 20
 
             Text {

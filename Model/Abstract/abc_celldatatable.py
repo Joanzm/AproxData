@@ -14,6 +14,8 @@ class AbcCellDataView(QAbstractTableModel, Generic[T]):
         self._currindex = currindex
         self._data = data
 
+    # QAbstractTableModel implementation
+
     def rowCount(self, parent=QModelIndex()):
        return len(self._data)
 
@@ -29,12 +31,14 @@ class AbcCellDataView(QAbstractTableModel, Generic[T]):
     def roleNames(self):
         pass
 
+    # Manipulate data implementation
+
     @abstractmethod
-    def add_entries(self, entries: List[type[T]]):
+    def addEntries(self, entries: List[type[T]]):
         pass
 
     @abstractmethod
-    def reset_entries(self, entries: List[type[T]]):
+    def resetEntries(self, entries: List[type[T]]):
         pass
 
     @Slot(int)
@@ -50,12 +54,7 @@ class AbcCellDataView(QAbstractTableModel, Generic[T]):
         self.endRemoveRows()
         self.dataChanged.emit(self._data)
 
-    @Property('QVariantList', notify=dataChanged)
-    def data(self) -> List[T]:
-        """
-        Get celldata.
-        """
-        return self._data
+    # Displaying index
 
     @Property(int, notify=currIndexChanged)
     def currindex(self) -> int:

@@ -9,7 +9,7 @@ class OcvSocCellData(AbcCellData[OcvSocEntry]):
         super().__init__(filename)
 
     @Slot(OcvSocEntry)
-    def add_entry(self, entry: OcvSocEntry):
+    def addEntry(self, entry: OcvSocEntry):
         self._celldata.append(entry)
 
     def add_values(self, voltage: float, soc: float) -> None:

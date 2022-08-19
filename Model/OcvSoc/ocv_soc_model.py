@@ -27,6 +27,6 @@ class OcvSocModel(AbcModel[OcvSocCellData]):
 
     def getData(self, filepath: str) -> OcvSocCellData:
         for i in range(len(self._dataObjects)):
-            if (self._dataObjects[i].fileinfo.filepath == filepath):
+            if (self._dataObjects[i].fileInfo.filePath == filepath):
                 return self._dataObjects[i]
         return None

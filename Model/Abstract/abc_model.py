@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List, TypeVar, Generic
 
-from PySide6.QtCore import Qt, Property, Signal, QUrl, Slot, QThread, QAbstractListModel, QModelIndex, QObject
+from PySide6.QtCore import Qt, Property, Signal, QAbstractListModel, QModelIndex, QObject
 
 from Model.Abstract.abc_celldata import AbcCellData
 

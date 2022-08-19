@@ -1,5 +1,5 @@
 from typing import List
-from PySide6.QtCore import Qt, Property, Signal, QUrl, Slot, QThread, QAbstractListModel, QModelIndex, QObject
+from PySide6.QtCore import Property, Signal, QUrl, Slot, QThread, QObject
 
 from Model.OcvSoc.ocv_soc_model import OcvSocModel
 
@@ -9,7 +9,6 @@ from .Abstract.abc_celldata import ProcessState
 from .OcvSoc.ocv_soc_celldatatable import OcvSocCellDataView
 from .OcvSoc.ocv_soc_celldatagraph import OcvSocCellDataGraph
 from .OcvSoc.ocv_soc_runnable import LoadXlsFileWorker
-from .OcvSoc import ocv_soc_celldataparser_xlr as Parser
 
 class CellDataAnalyzerModel(QObject):
 
@@ -26,7 +25,7 @@ class CellDataAnalyzerModel(QObject):
         self.__worker = None
         self._title = ""
         self._model = OcvSocModel([])
-        self._celldataview = OcvSocCellDataView(-1, [])
+        self._cellDataView = OcvSocCellDataView(-1, [])
         self._cellDataGraph = OcvSocCellDataGraph()
         self._model.selectedIndexChanged.connect(self.__selectionChanged)
 
@@ -57,27 +56,27 @@ class CellDataAnalyzerModel(QObject):
 
     @Slot(int)
     def __selectionChanged(self, index: int):
-        self._updateDataView()
-        self._updateGraphView()
+        self.__updateDataView()
+        self.__updateGraphView()
 
     # Table view reference and update mehtods
 
     @Property(QObject, notify=vmDataTableChanged)
-    def celldataview(self):
-        return self._celldataview
+    def cellDataView(self):
+        return self._cellDataView
 
-    def _updateDataView(self):
+    def __updateDataView(self):
         if (self.__worker.isFinished() and self.selectedIndex >= 0 and self.selectedIndex < len(self.data)):
             selected = self.data[self.selectedIndex]
             if (selected is not None):
-                self._celldataview.currindex = self.selectedIndex
+                self._cellDataView.currindex = self.selectedIndex
                 if (selected.dataLength() > 0):
-                    self._celldataview.reset_entries(selected.data)
+                    self._cellDataView.resetEntries(selected.data)
                 else:
-                    self._celldataview.clear_entries()
+                    self._cellDataView.clear_entries()
 
-    def _clearDataView(self):
-        self._celldataview.clear_entries()
+    def __clearDataView(self):
+        self._cellDataView.clear_entries()
 
     # Graph view reference and update methods
 
@@ -85,24 +84,24 @@ class CellDataAnalyzerModel(QObject):
     def cellDataGraph(self):
         return self._cellDataGraph
 
-    def _updateGraphView(self):
+    def __updateGraphView(self):
         if (self.__worker.isFinished() and self.selectedIndex >= 0 and self.selectedIndex < len(self.data)):
             selected = self.data[self.selectedIndex]
             if (selected is not None):
                 self._cellDataGraph.clearCellData()
                 self._cellDataGraph.addCellData(selected)
 
-    def _clearGraphView(self):
+    def __clearGraphView(self):
         self._cellDataGraph.clearCellData()
 
     # Loading files worker
 
     @Property(bool, notify=workerStateChanged)
-    def worker_finished(self) -> bool:
+    def workerFinished(self) -> bool:
         return self.__worker is None or self.__worker.isFinished()
 
     @Slot('QVariantList')
-    def load_elements(self, url: List[QUrl]) -> None:
+    def loadElements(self, url: List[QUrl]) -> None:
         if (self.__worker is None or self.__worker.isFinished()):
             files = []
             for i in range(len(url)):
@@ -111,33 +110,33 @@ class CellDataAnalyzerModel(QObject):
             self.__start_worker__(files)
 
     @Slot(int)
-    def reload_single_element_by_index(self, index: int) -> None:
+    def reloadSingleElementByIndex(self, index: int) -> None:
         if (index >= 0 and index < len(self.data)):
-            self.reload_single_element(self.data[index])
+            self.reloadSingleElement(self.data[index])
 
     @Slot(AbcCellData)
-    def reload_single_element(self, obj: AbcCellData) -> None:
+    def reloadSingleElement(self, obj: AbcCellData) -> None:
         if (self.__worker is None or self.__worker.isFinished()):
             if (obj is not None):
-                self.__start_worker__([obj.fileinfo.filepath])
+                self.__start_worker__([obj.fileInfo.filePath])
 
-    def __start_worker__(self, filepaths: List[str]):
-        self.__worker = LoadXlsFileWorker(filepaths)
-        self.__worker.entry_startReading.connect(self.__workerStartReadingFile)
-        self.__worker.entry_finishedReading.connect(self.__workerFinishedFile)
-        self.__worker.entry_faultedReading.connect(self.__workerFaultedReading)
+    def __start_worker__(self, filePaths: List[str]):
+        self.__worker = LoadXlsFileWorker(filePaths)
+        self.__worker.entryStartReading.connect(self.__workerStartReadingFile)
+        self.__worker.entryFinishedReading.connect(self.__workerFinishedFile)
+        self.__worker.entryFaultedReading.connect(self.__workerFaultedReading)
         self.__worker.start(QThread.LowestPriority)
         self.workerStateChanged.emit()
-        self._clearDataView()
-        self._clearGraphView()
+        self.__clearDataView()
+        self.__clearGraphView()
     
     @Slot(str)
-    def __workerStartReadingFile(self, filepath: str):
-        self._model.getData(filepath).state = ProcessState.Processing
+    def __workerStartReadingFile(self, filePath: str):
+        self._model.getData(filePath).state = ProcessState.Processing
     
     @Slot(str, 'QVariantList')
-    def __workerFinishedFile(self, filepath: str, data: List[List[float]]):
-        dataObj = self._model.getData(filepath)
+    def __workerFinishedFile(self, filePath: str, data: List[List[float]]):
+        dataObj = self._model.getData(filePath)
         if dataObj is not None:
             try:
                 # clear data before adding new elements
@@ -146,17 +145,17 @@ class CellDataAnalyzerModel(QObject):
                 for valuePair in data:
                     dataObj.add_values(valuePair[1], valuePair[0])
 
-                dataObj.clear_exception()
+                dataObj.clearException()
                 dataObj.state = ProcessState.Finished
 
                 self.workerStateChanged.emit()
-                self._updateDataView()
-                self._updateGraphView()
+                self.__updateDataView()
+                self.__updateGraphView()
             except Exception as e:
                 dataObj.processException = e
 
     @Slot(str, Exception)
-    def __workerFaultedReading(self, filepath: str, e: Exception):
-        dataObj = self._model.getData(filepath)
+    def __workerFaultedReading(self, filePath: str, e: Exception):
+        dataObj = self._model.getData(filePath)
         dataObj.processException = e
         self.workerStateChanged.emit()

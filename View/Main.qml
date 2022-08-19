@@ -70,7 +70,7 @@ ApplicationWindow {
         nameFilters: "XLS Files (*.xls)"
         fileMode: "OpenFiles"
         onAccepted: {
-            mainmodel.load_elements(fileDialog.selectedFiles)
+            mainmodel.loadElements(fileDialog.selectedFiles)
         }
     }
 }

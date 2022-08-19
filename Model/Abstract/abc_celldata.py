@@ -1,7 +1,7 @@
 from enum import IntEnum
-from PySide6.QtCore import Property, Signal, QModelIndex, QPersistentModelIndex, Slot, QEnum, QObject, QAbstractTableModel
+from PySide6.QtCore import Property, Signal, QEnum, QObject
 from abc import abstractmethod
-from typing import List, TypeVar, Generic, Union
+from typing import List, TypeVar, Generic
 
 from Model.basic_models import FileInfo
 
@@ -28,14 +28,14 @@ class AbcCellData(QObject, Generic[T]):
         self._processException = None
 
     @abstractmethod
-    def add_entry(self, entry: type[T]):
+    def addEntry(self, entry: type[T]):
         pass
 
     @Property('QVariantList')
     def data(self) -> List[type[T]]:
         return self._celldata
 
-    def delete_entry(self, row: int):
+    def deleteEntry(self, row: int):
         del self._celldata[row]
 
     def clearData(self):
@@ -45,11 +45,11 @@ class AbcCellData(QObject, Generic[T]):
         return len(self._celldata)
 
     @Property(FileInfo, notify=fileinfoChanged)
-    def fileinfo(self) -> FileInfo:
+    def fileInfo(self) -> FileInfo:
         return self._fileInfo
     
-    def set_file(self, value: str):
-        self._fileInfo.filepath = value
+    def setFile(self, value: str):
+        self._fileInfo.filePath = value
 
     @Property(ProcessState, notify=stateChanged)
     def state(self) -> ProcessState:
@@ -61,11 +61,11 @@ class AbcCellData(QObject, Generic[T]):
         self.stateChanged.emit()
 
     @Property(str, notify=stateChanged)
-    def state_str(self) -> str:
+    def stateStr(self) -> str:
         return self._state.name
 
     @Property(int, notify=stateChanged)
-    def state_int(self) -> int:
+    def stateInt(self) -> int:
         return int(self._state)
 
     @Property(Exception, notify=processExcepionChanged)
@@ -79,7 +79,7 @@ class AbcCellData(QObject, Generic[T]):
             self.state = ProcessState.Faulted
         self.processExcepionChanged.emit()
 
-    def clear_exception(self):
+    def clearException(self):
         self._processException = None
         self.processExcepionChanged.emit()
 

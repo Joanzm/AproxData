@@ -11,7 +11,7 @@ ColumnLayout {
 
     Keys.onPressed: (event) => { 
         if (event.key == Qt.Key_F5) 
-            partModel.reload_single_element_by_index(_lv.currentIndex)
+            partModel.reloadSingleElementByIndex(_lv.currentIndex)
     }
 
     ScrollView {
@@ -53,7 +53,7 @@ ColumnLayout {
                             spacing: 1
 
                             Text { 
-                                text: model.celldata.fileinfo.filename
+                                text: model.celldata.fileInfo.fileName
                             }
 
                             Grid {
@@ -62,15 +62,15 @@ ColumnLayout {
                                 columns: 3
                                 spacing: 2
                                 Text { 
-                                    text: model.celldata.state_str
+                                    text: model.celldata.stateStr
                                     color: {
-                                        if (model.celldata.state_int == 0) {
+                                        if (model.celldata.stateInt == 0) {
                                             return "gray";
                                         }
-                                        else if (model.celldata.state_int == 1) {
+                                        else if (model.celldata.stateInt == 1) {
                                             return "orange";
                                         }
-                                        else if (model.celldata.state_int == 3) {
+                                        else if (model.celldata.stateInt == 3) {
                                             return "red";
                                         }
                                         else {
@@ -85,7 +85,7 @@ ColumnLayout {
                                         propagateComposedEvents: true
                                     }
 
-                                    ToolTip.visible: _errMouseArea.containsMouse && model.celldata.state_int == 3 
+                                    ToolTip.visible: _errMouseArea.containsMouse && model.celldata.stateInt == 3 
                                     ToolTip.text: model.celldata.exceptionMessage
                                 }
                                 Text {
@@ -101,11 +101,11 @@ ColumnLayout {
                                     }
 
                                     ToolTip.visible: _infoMouseArea.containsMouse
-                                    ToolTip.text: model.celldata.fileinfo.strDisplay
+                                    ToolTip.text: model.celldata.fileInfo.strDisplay
                                 }
                                 Text {
                                     text: "(Reload on F5)"
-                                    visible: _lvItem.ListView.isCurrentItem && partModel.worker_finished
+                                    visible: _lvItem.ListView.isCurrentItem && partModel.workerFinished
                                 }
                             }
                         }
@@ -122,7 +122,7 @@ ColumnLayout {
         Layout.alignment: "AlignBottom"
         Layout.fillWidth: true
         text: "Load"
-        enabled: partModel.worker_finished
+        enabled: partModel.workerFinished
         onClicked: {
             fileDialog.visible = true
         }

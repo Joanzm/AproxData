@@ -30,7 +30,7 @@ Rectangle {
             target: partModel.cellDataGraph
             function onSeriesAdded(value) { 
 
-                var series = cellDataChartView.createSeries(ChartView.SeriesTypeSpline, value.fileinfo.filepath, axisX, axisY);
+                var series = cellDataChartView.createSeries(ChartView.SeriesTypeSpline, value.fileInfo.filePath, axisX, axisY);
 
                 value.data.forEach(entry => {
                     var p = entry.point

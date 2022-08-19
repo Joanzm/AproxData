@@ -1,46 +1,45 @@
 import os
 import time
-from typing import List
-from PySide6.QtCore import Qt, Property, Signal, QUrl, Slot, QThread, QAbstractListModel, QModelIndex, QObject
+from PySide6.QtCore import Property, Signal, QObject
 
 class FileInfo(QObject):
 
-    filepath_changed = Signal(str)
-    properties_changed = Signal()
+    filePathChanged = Signal(str)
+    propertiesChanged = Signal()
 
     def __init__(self, filepath: str) -> None:
         super().__init__()
-        self.__filepath = filepath
+        self._filePath = filepath
 
-    @Property(str, notify=filepath_changed)
-    def filepath(self) -> str:
-        return self.__filepath
+    @Property(str, notify=filePathChanged)
+    def filePath(self) -> str:
+        return self._filePath
 
-    @filepath.setter
-    def filepath(self, value: str) -> None:
-        self.__filepath = value
-        self.filepath_changed.emit(value)
-        self.properties_changed.emit()
+    @filePath.setter
+    def filePath(self, value: str) -> None:
+        self._filePath = value
+        self.filePathChanged.emit(value)
+        self.propertiesChanged.emit()
 
-    @Property(str, notify=properties_changed)
-    def filename(self) -> str:
-        return os.path.basename(self.__filepath)
+    @Property(str, notify=propertiesChanged)
+    def fileName(self) -> str:
+        return os.path.basename(self._filePath)
 
-    @Property(float, notify=properties_changed)
+    @Property(float, notify=propertiesChanged)
     def fileSize(self) -> float:
-        return os.path.getsize(self.__filepath) / 1000 # in KB
-    
-    @Property(str, notify=properties_changed)
+        return os.path.getsize(self._filePath) / 1000 # in KB
+
+    @Property(str, notify=propertiesChanged)
     def createDate(self) -> str:
-        seconds = os.path.getctime(self.__filepath)
+        seconds = os.path.getctime(self._filePath)
         return time.ctime(seconds)
 
-    @Property(str, notify=properties_changed)
+    @Property(str, notify=propertiesChanged)
     def lastEditDate(self) -> str:
-        seconds = os.path.getmtime(self.__filepath)
+        seconds = os.path.getmtime(self._filePath)
         return time.ctime(seconds)
 
-    @Property(str, notify=properties_changed)
+    @Property(str, notify=propertiesChanged)
     def strDisplay(self) -> str:
         return "Filepath: {}\nFilesize: {} KB\nCreate date: {}\nLast edit date: {}".format(
-            self.filepath, self.fileSize, self.createDate, self.lastEditDate)
+            self.filePath, self.fileSize, self.createDate, self.lastEditDate)
