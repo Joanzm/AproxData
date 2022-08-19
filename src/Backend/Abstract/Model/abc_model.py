@@ -2,12 +2,16 @@ from abc import abstractmethod
 from typing import List, TypeVar, Generic
 from PySide6.QtCore import Qt, Property, Signal, QAbstractListModel, QModelIndex, QObject
 
-from .abc_celldata import AbcCellData
+from .abc_celldata import AbcCellData, ProcessState
 
-T = TypeVar("T")
+T = TypeVar("T", bound=AbcCellData)
 
 class AbcModel(QAbstractListModel, Generic[T]):
 
+    # Notify global view
+    updateSignal = Signal()
+    clearSignal = Signal()
+    # Notify properties
     celldataChanged = Signal('QVariantList')
     selectedIndexChanged = Signal(int)
     selectedValueChanged = Signal()
@@ -47,6 +51,8 @@ class AbcModel(QAbstractListModel, Generic[T]):
             self._selectedIndex = value
             self.selectedIndexChanged.emit(value)
             self.selectedValueChanged.emit()
+            if self.allDataLoaded():
+                self.updateSignal.emit()
 
     @Property(QObject, notify=selectedValueChanged)
     def selectedValue(self) -> AbcCellData:
@@ -64,6 +70,12 @@ class AbcModel(QAbstractListModel, Generic[T]):
     @dataObjects.deleter
     def dataObjects(self):
         self._dataObjects = []
+
+    def allDataLoaded(self) -> bool:
+        for i in range(len(self._dataObjects)):
+            if self._dataObjects[i].state == ProcessState.Pendeling or self._dataObjects[i].state == ProcessState.Processing:
+                return False
+        return True
 
     # ABSTRACT
 
