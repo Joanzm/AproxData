@@ -11,7 +11,7 @@ ScrollView {
 
     TableView {
         id: table
-        model: partModel.cellDataView
+        model: partModel.cellDataTable
         
         columnWidthProvider: function (column) { 
             return table.model ? table.width/table.model.columnCount() : 0

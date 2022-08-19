@@ -1,12 +1,12 @@
-from PySide6.QtCore import Qt, Slot, QModelIndex, QPersistentModelIndex
-from typing import List, Union
+from PySide6.QtCore import Qt, QModelIndex, QPersistentModelIndex
+from typing import Union
 
-from ..Model.ocv_soc_model import OcvSocModel, OcvSocCellData
-from ...Abstract.ViewModel.abc_celldatatable import AbcCellDataTable
+from .ocv_soc_vmData import OcvSocDataViewModel, OcvSocCellData
+from Backend.Abstract.ViewModel.abc_vmCellDataTable import AbcCellDataTable
 
-class OcvSocCellDataTable(AbcCellDataTable[OcvSocModel, OcvSocCellData]):
+class OcvSocCellDataTable(AbcCellDataTable[OcvSocDataViewModel, OcvSocCellData]):
 
-    def __init__(self, model: OcvSocModel) -> None:
+    def __init__(self, model: OcvSocDataViewModel) -> None:
         super().__init__(model)
 
     # QAbstractTableModel implementation

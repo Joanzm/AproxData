@@ -1,13 +1,11 @@
 from typing import List
-from PySide6.QtCore import Property, Signal, QUrl, Slot, QThread, QObject
+from PySide6.QtCore import Property, Signal, QObject
 
-from .OcvSoc.Model.ocv_soc_model import OcvSocModel
+from .OcvSoc.ViewModel.ocv_soc_vmData import OcvSocDataViewModel
 
-from .Abstract.Model.abc_celldata import AbcCellData
-from .OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
-from .Abstract.Model.abc_celldata import ProcessState
-from .OcvSoc.ViewModel.ocv_soc_celldatatable import OcvSocCellDataTable
-from .OcvSoc.ViewModel.ocv_soc_celldatagraph import OcvSocCellDataGraph
+from .OcvSoc.Model.ocv_soc_cellData import OcvSocCellData
+from .OcvSoc.ViewModel.ocv_soc_vmCellDataTable import OcvSocCellDataTable
+from .OcvSoc.ViewModel.ocv_soc_vmCellDataGraph import OcvSocCellDataGraph
 from .OcvSoc.ocv_soc_runnable import OcvSocLoadXlsFileRunner
 
 class CellDataAnalyzerModel(QObject):
@@ -22,10 +20,11 @@ class CellDataAnalyzerModel(QObject):
     def __init__(self) -> None:
         super().__init__()
         self._title = ""
-        self._model = OcvSocModel([])
+        self._model = OcvSocDataViewModel([])
         self._dataParser = OcvSocLoadXlsFileRunner(self._model)
-        self._cellDataView = OcvSocCellDataTable(self._model)
+        self._cellDataTable = OcvSocCellDataTable(self._model)
         self._cellDataGraph = OcvSocCellDataGraph(self._model)
+        self.vmDataGraphChanged.emit(self._cellDataGraph)
 
     # Title of this model class
 
@@ -55,8 +54,8 @@ class CellDataAnalyzerModel(QObject):
     # Table view reference and update mehtods
 
     @Property(QObject, notify=vmDataTableChanged)
-    def cellDataView(self):
-        return self._cellDataView
+    def cellDataTable(self):
+        return self._cellDataTable
 
     # Graph view reference and update methods
 

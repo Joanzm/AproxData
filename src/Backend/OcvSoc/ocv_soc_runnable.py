@@ -1,16 +1,16 @@
 from typing import List
 from PySide6.QtCore import QThread, Signal, Property, Slot, QUrl, QObject
 
-from ..Abstract.Model.abc_model import AbcCellData
-from ..Abstract.Model.abc_celldata import ProcessState
-from .Model.ocv_soc_model import OcvSocModel, OcvSocCellData
-from ..OcvSoc import ocv_soc_celldataparser_xlr as Parser
+from Backend.Abstract.ViewModel.abc_vmData import AbcCellData
+from Backend.Abstract.Model.abc_cellData import ProcessState
+from Backend.OcvSoc.ViewModel.ocv_soc_vmData import OcvSocDataViewModel, OcvSocCellData
+from Backend.OcvSoc import ocv_soc_celldataparser_xlr as Parser
 
 class OcvSocLoadXlsFileRunner(QObject):
 
     workerStateChanged = Signal()
 
-    def __init__(self, model: OcvSocModel) -> None:
+    def __init__(self, model: OcvSocDataViewModel) -> None:
         super().__init__()
         self.__worker = None
         self._model = model
@@ -46,7 +46,7 @@ class OcvSocLoadXlsFileRunner(QObject):
         self.__worker.entryFaultedReading.connect(self.__workerFaultedReading)
         self.__worker.start(QThread.LowestPriority)
         self.workerStateChanged.emit()
-        self._model.clearSignal.emit()
+        self._model.clearView()
     
     @Slot(str)
     def __workerStartReadingFile(self, filePath: str):
@@ -67,10 +67,7 @@ class OcvSocLoadXlsFileRunner(QObject):
                 dataObj.state = ProcessState.Finished
 
                 self.workerStateChanged.emit()
-
-                if self._model.allDataLoaded():
-                    self._model.updateTableSignal.emit()
-                    self._model.updateGraphSignal.emit()
+                self._model.updateView()
             except Exception as e:
                 dataObj.processException = e
 

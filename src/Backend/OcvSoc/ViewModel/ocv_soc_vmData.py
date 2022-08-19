@@ -1,11 +1,10 @@
 from typing import List
 from PySide6.QtCore import QModelIndex
 
-from ...Abstract.Model.abc_celldata import AbcCellData
-from ...Abstract.Model.abc_model import AbcModel
-from .ocv_soc_celldata import OcvSocCellData
+from Backend.Abstract.ViewModel.abc_vmData import AbcDataViewModel, AbcCellData
+from Backend.OcvSoc.Model.ocv_soc_cellData import OcvSocCellData
 
-class OcvSocModel(AbcModel[OcvSocCellData]):
+class OcvSocDataViewModel(AbcDataViewModel[OcvSocCellData]):
     
     def __init__(self, data: List[OcvSocCellData]) -> None:
         super().__init__(data)

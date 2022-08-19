@@ -3,8 +3,8 @@ import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQml import qmlRegisterType
-from Backend.Abstract.Model.abc_celldata import AbcCellData
-from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
+from Backend.Abstract.Model.abc_cellData import AbcCellData
+from Backend.OcvSoc.Model.ocv_soc_cellData import OcvSocCellData
 from Backend.OcvSoc.Model.ocv_soc_entry import OcvSocEntry
 from Backend.main_model import CellDataAnalyzerModel
 

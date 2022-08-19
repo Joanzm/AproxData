@@ -2,15 +2,17 @@ from abc import abstractmethod
 from typing import List, TypeVar, Generic
 from PySide6.QtCore import Qt, Property, Signal, QAbstractListModel, QModelIndex, QObject
 
-from .abc_celldata import AbcCellData, ProcessState
+from ..Model.abc_cellData import AbcCellData, ProcessState
 
 T = TypeVar("T", bound=AbcCellData)
 
-class AbcModel(QAbstractListModel, Generic[T]):
+class AbcDataViewModel(QAbstractListModel, Generic[T]):
 
     # Notify global view
-    updateSignal = Signal()
-    clearSignal = Signal()
+    updateGraphSignal = Signal()
+    clearGraphSignal = Signal()
+    updateTableSignal = Signal()
+    clearTableSignal = Signal()
     # Notify properties
     celldataChanged = Signal('QVariantList')
     selectedIndexChanged = Signal(int)
@@ -27,7 +29,7 @@ class AbcModel(QAbstractListModel, Generic[T]):
 
     def roleNames(self):
         return {
-            AbcModel.cellDataRole: b'celldata',
+            AbcDataViewModel.cellDataRole: b'celldata',
         }
 
     def rowCount(self, parent=QModelIndex()):
@@ -35,7 +37,7 @@ class AbcModel(QAbstractListModel, Generic[T]):
 
     def data(self, index, role=Qt.DisplayRole):
         if index.isValid():
-            if role == AbcModel.cellDataRole:
+            if role == AbcDataViewModel.cellDataRole:
                 return self._dataObjects[index.row()]
         return None
 
@@ -51,8 +53,7 @@ class AbcModel(QAbstractListModel, Generic[T]):
             self._selectedIndex = value
             self.selectedIndexChanged.emit(value)
             self.selectedValueChanged.emit()
-            if self.allDataLoaded():
-                self.updateSignal.emit()
+            self.updateView()
 
     @Property(QObject, notify=selectedValueChanged)
     def selectedValue(self) -> AbcCellData:
@@ -71,11 +72,21 @@ class AbcModel(QAbstractListModel, Generic[T]):
     def dataObjects(self):
         self._dataObjects = []
 
-    def allDataLoaded(self) -> bool:
+    # Update View
+
+    def canUpdateView(self) -> bool:
         for i in range(len(self._dataObjects)):
             if self._dataObjects[i].state == ProcessState.Pendeling or self._dataObjects[i].state == ProcessState.Processing:
                 return False
         return True
+
+    def updateView(self):
+        self.updateTableSignal.emit()
+        self.updateGraphSignal.emit()
+
+    def clearView(self):
+        self.clearTableSignal.emit()
+        self.clearGraphSignal.emit()
 
     # ABSTRACT
 

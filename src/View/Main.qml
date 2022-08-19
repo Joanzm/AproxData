@@ -16,15 +16,31 @@ ApplicationWindow {
     property QtObject mainmodel: CellDataAnalyzerModel{ }
 
     menuBar: MenuBar {
+        enabled: mainmodel.dataParser.workerFinished
         Menu {
             title: qsTr("Datei")
             MenuItem {
                 text: qsTr("&Open")
-                onTriggered: console.log("Open action triggered")               
+                onTriggered: fileDialog.visible = true            
             }
             MenuItem {
-                text: qsTr("Exit")
+                text: qsTr("Exit")               
                 onTriggered: Qt.quit();
+            }
+        }
+        Menu {
+            title: qsTr("View")
+            MenuItem {
+                text: qsTr("Show all data in table")
+                checkable: true
+                checked: mainmodel.cellDataTable.viewAll
+                onCheckedChanged: mainmodel.cellDataTable.viewAll = !mainmodel.cellDataTable.viewAll
+            }
+            MenuItem {
+                text: qsTr("Show all graphs")
+                checkable: true
+                checked: mainmodel.cellDataGraph.viewAll
+                onCheckedChanged: mainmodel.cellDataGraph.viewAll = !mainmodel.cellDataGraph.viewAll
             }
         }
     }
