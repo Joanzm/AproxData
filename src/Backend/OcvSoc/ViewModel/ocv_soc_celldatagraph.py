@@ -1,7 +1,7 @@
-from ..Model.ocv_soc_entry import OcvSocEntry
+from ..Model.ocv_soc_model import OcvSocModel, OcvSocCellData
 from ...Abstract.ViewModel.abc_celldatagraph import AbcCellDataGraph
 
-class OcvSocCellDataGraph(AbcCellDataGraph[OcvSocEntry]):
+class OcvSocCellDataGraph(AbcCellDataGraph[OcvSocModel, OcvSocCellData]):
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, model: OcvSocModel) -> None:
+        super().__init__(model)

@@ -1,27 +1,35 @@
 from typing import TypeVar, Generic
-from PySide6.QtCore import Signal, QObject
-from ..Model.abc_celldata import AbcCellData
+from PySide6.QtCore import Signal, QObject, Slot
 
-T = TypeVar("T")
+from ..Model.abc_model import AbcModel, AbcCellData
 
-class AbcCellDataGraph(QObject, Generic[T]):
+T = TypeVar("T", bound=AbcModel)
+W = TypeVar("W", bound=AbcCellData)
+
+class AbcCellDataGraph(QObject, Generic[T,W]):
 
     seriesAdded = Signal(AbcCellData)
     seriesRemoved = Signal(AbcCellData)
     seriesCleared = Signal()
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
+    def __init__(self, model: T):
+        super().__init__()
+        self._model = model
         self._cellData = []
+        self._model.updateSignal.connect(self.updateGraph)
+        self._model.clearSignal.connect(self.clearGraph)
 
-    def addCellData(self, cellData: AbcCellData):
-        self._cellData.append(cellData)
-        self.seriesAdded.emit(cellData)
+    # Update slots
 
-    def removeCellData(self, cellData: AbcCellData):
-        self._cellData.remove(cellData)
-        self.seriesRemoved.emit(cellData)
+    @Slot()
+    def updateGraph(self):
+        if (self._model.selectedIndex >= 0 and self._model.selectedIndex < len(self._model.dataObjects)):
+            selected = self._model.dataObjects[self._model.selectedIndex]
+            if (selected is not None):
+                self.seriesCleared.emit()
+                self.seriesAdded.emit(selected)
 
-    def clearCellData(self):
-        self._cellData.clear()
+    @Slot()
+    def clearGraph(self):
         self.seriesCleared.emit()
+        

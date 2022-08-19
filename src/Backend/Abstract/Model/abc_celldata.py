@@ -6,7 +6,7 @@ from typing import List, TypeVar, Generic
 from ...basic_models import FileInfo
 from .abc_entry import AbcEntry
 
-T = TypeVar("T")
+T = TypeVar("T", bound = AbcEntry)
 
 @QEnum
 class ProcessState(IntEnum):

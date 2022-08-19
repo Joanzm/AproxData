@@ -11,7 +11,7 @@ ColumnLayout {
 
     Keys.onPressed: (event) => { 
         if (event.key == Qt.Key_F5) 
-            partModel.reloadSingleElementByIndex(_lv.currentIndex)
+            partModel.dataParser.reloadSingleElementByIndex(_lv.currentIndex)
     }
 
     ScrollView {
@@ -105,7 +105,7 @@ ColumnLayout {
                                 }
                                 Text {
                                     text: "(Reload on F5)"
-                                    visible: _lvItem.ListView.isCurrentItem && partModel.workerFinished
+                                    visible: _lvItem.ListView.isCurrentItem && partModel.dataParser.workerFinished
                                 }
                             }
                         }
@@ -122,7 +122,7 @@ ColumnLayout {
         Layout.alignment: "AlignBottom"
         Layout.fillWidth: true
         text: "Load"
-        enabled: partModel.workerFinished
+        enabled: partModel.dataParser.workerFinished
         onClicked: {
             fileDialog.visible = true
         }
