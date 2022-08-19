@@ -1,13 +1,13 @@
 from typing import List
 from PySide6.QtCore import Property, Signal, QUrl, Slot, QThread, QObject
 
-from Model.OcvSoc.ocv_soc_model import OcvSocModel
+from .OcvSoc.Model.ocv_soc_model import OcvSocModel
 
-from .Abstract.abc_celldata import AbcCellData
-from .OcvSoc.ocv_soc_celldata import OcvSocCellData
-from .Abstract.abc_celldata import ProcessState
-from .OcvSoc.ocv_soc_celldatatable import OcvSocCellDataView
-from .OcvSoc.ocv_soc_celldatagraph import OcvSocCellDataGraph
+from .Abstract.Model.abc_celldata import AbcCellData
+from .OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
+from .Abstract.Model.abc_celldata import ProcessState
+from .OcvSoc.ViewModel.ocv_soc_celldatatable import OcvSocCellDataView
+from .OcvSoc.ViewModel.ocv_soc_celldatagraph import OcvSocCellDataGraph
 from .OcvSoc.ocv_soc_runnable import LoadXlsFileWorker
 
 class CellDataAnalyzerModel(QObject):

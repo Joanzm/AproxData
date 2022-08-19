@@ -1,7 +1,8 @@
 from PySide6.QtCore import Qt, Slot, QModelIndex, QPersistentModelIndex
 from typing import List, Union
-from .ocv_soc_entry import OcvSocEntry
-from Model.Abstract.abc_celldatatable import AbcCellDataView
+
+from ..Model.ocv_soc_entry import OcvSocEntry
+from ...Abstract.ViewModel.abc_celldatatable import AbcCellDataView
 
 class OcvSocCellDataView(AbcCellDataView[OcvSocEntry]):
 

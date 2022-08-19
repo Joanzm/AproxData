@@ -1,9 +1,8 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import List, TypeVar, Generic
-
 from PySide6.QtCore import Qt, Property, Signal, QAbstractListModel, QModelIndex, QObject
 
-from Model.Abstract.abc_celldata import AbcCellData
+from .abc_celldata import AbcCellData
 
 T = TypeVar("T")
 

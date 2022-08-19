@@ -3,10 +3,10 @@ import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQml import qmlRegisterType
-from Model.Abstract.abc_celldata import AbcCellData
-from Model.OcvSoc.ocv_soc_celldata import OcvSocCellData
-from Model.OcvSoc.ocv_soc_entry import OcvSocEntry
-from Model.main_model import CellDataAnalyzerModel
+from Backend.Abstract.Model.abc_celldata import AbcCellData
+from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
+from Backend.OcvSoc.Model.ocv_soc_entry import OcvSocEntry
+from Backend.main_model import CellDataAnalyzerModel
 
 if __name__ == "__main__":
     """
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     qmlRegisterType(OcvSocEntry, 'CellEntries', 1, 0, 'OcvSocEntry')
 
     engine = QQmlApplicationEngine()
-    engine.load("View/Main.qml")
+    engine.load("src/View/Main.qml")
 
     if not engine.rootObjects():
         sys.exit(-1)

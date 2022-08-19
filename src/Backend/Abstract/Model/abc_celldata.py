@@ -3,7 +3,8 @@ from PySide6.QtCore import Property, Signal, QEnum, QObject
 from abc import abstractmethod
 from typing import List, TypeVar, Generic
 
-from Model.basic_models import FileInfo
+from ...basic_models import FileInfo
+from .abc_entry import AbcEntry
 
 T = TypeVar("T")
 

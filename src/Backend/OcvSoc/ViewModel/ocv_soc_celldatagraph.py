@@ -1,5 +1,5 @@
-from .ocv_soc_entry import OcvSocEntry
-from Model.Abstract.abc_celldatagraph import AbcCellDataGraph
+from ..Model.ocv_soc_entry import OcvSocEntry
+from ...Abstract.ViewModel.abc_celldatagraph import AbcCellDataGraph
 
 class OcvSocCellDataGraph(AbcCellDataGraph[OcvSocEntry]):
 

@@ -1,10 +1,8 @@
-from abc import ABC, abstractmethod
-from typing import List, TypeVar, Generic
-
+from typing import List
 from PySide6.QtCore import QModelIndex
 
-from Model.Abstract.abc_celldata import AbcCellData
-from Model.Abstract.abc_model import AbcModel
+from ...Abstract.Model.abc_celldata import AbcCellData
+from ...Abstract.Model.abc_model import AbcModel
 from .ocv_soc_celldata import OcvSocCellData
 
 class OcvSocModel(AbcModel[OcvSocCellData]):

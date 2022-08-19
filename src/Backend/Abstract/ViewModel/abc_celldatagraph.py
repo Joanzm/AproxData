@@ -1,6 +1,6 @@
 from typing import TypeVar, Generic
 from PySide6.QtCore import Signal, QObject
-from .abc_celldata import AbcCellData
+from ..Model.abc_celldata import AbcCellData
 
 T = TypeVar("T")
 
