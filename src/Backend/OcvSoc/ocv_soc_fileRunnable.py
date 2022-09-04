@@ -4,9 +4,9 @@ from PySide6.QtCore import QThread, Signal, Property, Slot, QUrl, QObject
 from Backend.Abstract.ViewModel.abc_vmData import AbcCellData
 from Backend.Abstract.Model.abc_cellData import ProcessState
 from Backend.OcvSoc.ViewModel.ocv_soc_vmData import OcvSocDataViewModel, OcvSocCellData
-from Backend.OcvSoc import ocv_soc_celldataparser_xlr as Parser
+from Backend.OcvSoc import ocv_soc_celldataparser_xlr as XlrParser
 
-class OcvSocLoadXlsFileRunner(QObject):
+class OcvSocFileRunner(QObject):
 
     workerStateChanged = Signal()
 
@@ -25,13 +25,18 @@ class OcvSocLoadXlsFileRunner(QObject):
             files = []
             for i in range(len(url)):
                 files.append(url[i].toLocalFile())
-                self._model.addData(OcvSocCellData(files[i]))
+                data = self._model.getData(url[i].toLocalFile())
+                if (data is None):
+                    self._model.addData(OcvSocCellData(files[i]))
+                else:
+                    data.clearData()
+                    data.state = ProcessState.Pendeling
             self.__start_worker__(files)
 
     @Slot(int)
     def reloadSingleElementByIndex(self, index: int) -> None:
-        if (index >= 0 and index < len(self.data)):
-            self.reloadSingleElement(self.data[index])
+        if (index >= 0 and index < len(self._model.dataObjects)):
+            self.reloadSingleElement(self._model.dataObjects[index])
 
     @Slot(AbcCellData)
     def reloadSingleElement(self, obj: AbcCellData) -> None:
@@ -40,13 +45,13 @@ class OcvSocLoadXlsFileRunner(QObject):
                 self.__start_worker__([obj.fileInfo.filePath])
 
     def __start_worker__(self, filePaths: List[str]):
-        self.__worker = OcvSocLoadXlsFileWorker(filePaths)
+        self.__worker = OcvSocFileWorker(filePaths)
         self.__worker.entryStartReading.connect(self.__workerStartReadingFile)
         self.__worker.entryFinishedReading.connect(self.__workerFinishedFile)
         self.__worker.entryFaultedReading.connect(self.__workerFaultedReading)
-        self.__worker.start(QThread.LowestPriority)
+        self.__worker.start(QThread.HighPriority)
         self.workerStateChanged.emit()
-        self._model.clearView()
+        self._model.clearViewSignal.emit()
     
     @Slot(str)
     def __workerStartReadingFile(self, filePath: str):
@@ -67,7 +72,7 @@ class OcvSocLoadXlsFileRunner(QObject):
                 dataObj.state = ProcessState.Finished
 
                 self.workerStateChanged.emit()
-                self._model.updateView()
+                self._model.dataChangedSignal.emit()
             except Exception as e:
                 dataObj.processException = e
 
@@ -77,7 +82,7 @@ class OcvSocLoadXlsFileRunner(QObject):
         dataObj.processException = e
         self.workerStateChanged.emit()
 
-class OcvSocLoadXlsFileWorker(QThread):
+class OcvSocFileWorker(QThread):
 
     entryStartReading = Signal(str)
     entryFinishedReading = Signal(str, 'QVariantList')
@@ -91,6 +96,6 @@ class OcvSocLoadXlsFileWorker(QThread):
         for f in self.__filepaths:
             try:
                 self.entryStartReading.emit(f)
-                self.entryFinishedReading.emit(f, Parser.load_sheets(f))
+                self.entryFinishedReading.emit(f, XlrParser.load_sheets(f))
             except Exception as e:
                 self.entryFaultedReading.emit(f, e)

@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Dialogs
 import QtQuick.Layouts
 import CellEntries 1.0
 import CellDataAnalyzerModel 1.0
@@ -18,7 +17,7 @@ ApplicationWindow {
     menuBar: MenuBar {
         enabled: mainmodel.dataParser.workerFinished
         Menu {
-            title: qsTr("Datei")
+            title: qsTr("File")
             MenuItem {
                 text: qsTr("&Open")
                 onTriggered: fileDialog.visible = true            
@@ -51,42 +50,32 @@ ApplicationWindow {
         rowSpacing: 2; columnSpacing: 2
 
         FileListView {
-            partModel: mainmodel
+            viewModel: mainmodel
             Layout.minimumWidth: 100; Layout.minimumHeight: 100
             Layout.preferredWidth: 50; Layout.preferredHeight: 80
             Layout.fillWidth: true; Layout.fillHeight: true
         }
 
         CellDataTableView {
-            partModel: mainmodel
+            viewModel: mainmodel
             Layout.minimumWidth: 100; Layout.minimumHeight: 100
             Layout.preferredWidth: 80; Layout.preferredHeight: 80
             Layout.fillWidth: true; Layout.fillHeight: true
         }
 
         // FileInfoView {
-        //     partModel: mainmodel
+        //     viewModel: mainmodel
         //     Layout.minimumWidth: 100; Layout.minimumHeight: 65
         //     Layout.preferredWidth: 100; Layout.preferredHeight: 50
         //     Layout.fillWidth: true; Layout.fillHeight: true
         // }
 
         CellDataChartView {
-            partModel: mainmodel
+            viewModel: mainmodel
             Layout.minimumWidth: 100; Layout.minimumHeight: 85
             Layout.preferredWidth: 80; Layout.preferredHeight: 80
             Layout.columnSpan: 2
             Layout.fillWidth: true; Layout.fillHeight: true
-        }
-    }
-
-    FileDialog {
-        id: fileDialog
-        title: "Please choose a file"
-        nameFilters: "XLS Files (*.xls)"
-        fileMode: "OpenFiles"
-        onAccepted: {
-            mainmodel.dataParser.loadElements(fileDialog.selectedFiles)
         }
     }
 }

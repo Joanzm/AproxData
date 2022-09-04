@@ -4,7 +4,7 @@ import QtCharts
 import CellDataAnalyzerModel 1.0
 
 Rectangle {
-    property CellDataAnalyzerModel partModel: null
+    property CellDataAnalyzerModel viewModel: null
 
     ChartView {
         id: cellDataChartView
@@ -27,7 +27,7 @@ Rectangle {
         }
 
         Connections {
-            target: partModel.cellDataGraph
+            target: viewModel.cellDataGraph
             function onSeriesAdded(value) { 
 
                 var series = cellDataChartView.createSeries(ChartView.SeriesTypeSpline, value.fileInfo.filePath, axisX, axisY);

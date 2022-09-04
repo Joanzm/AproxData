@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from typing import List, TypeVar, Generic
-from PySide6.QtCore import Qt, Property, Signal, QAbstractListModel, QModelIndex, QObject
+from PySide6.QtCore import Qt, Property, Signal, Slot, QAbstractListModel, QModelIndex, QObject
 
 from ..Model.abc_cellData import AbcCellData, ProcessState
 
@@ -9,14 +9,12 @@ T = TypeVar("T", bound=AbcCellData)
 class AbcDataViewModel(QAbstractListModel, Generic[T]):
 
     # Notify global view
-    updateGraphSignal = Signal()
-    clearGraphSignal = Signal()
-    updateTableSignal = Signal()
-    clearTableSignal = Signal()
+
     # Notify properties
-    celldataChanged = Signal('QVariantList')
-    selectedIndexChanged = Signal(int)
-    selectedValueChanged = Signal()
+    clearViewSignal = Signal()
+    dataChangedSignal = Signal()
+    selectedIndexChangedSignal = Signal(int)
+    selectionChangedSignal = Signal()
 
     def __init__(self, data: List[T]) -> None:
         super().__init__()
@@ -43,7 +41,7 @@ class AbcDataViewModel(QAbstractListModel, Generic[T]):
 
     # Selection implementation
 
-    @Property(int, notify=selectedIndexChanged)
+    @Property(int, notify=selectedIndexChangedSignal)
     def selectedIndex(self) -> int:
         return self._selectedIndex
     
@@ -51,11 +49,10 @@ class AbcDataViewModel(QAbstractListModel, Generic[T]):
     def selectedIndex(self, value: int):
         if (self._selectedIndex != value):
             self._selectedIndex = value
-            self.selectedIndexChanged.emit(value)
-            self.selectedValueChanged.emit()
-            self.updateView()
+            self.selectedIndexChangedSignal.emit(value)
+            self.selectionChangedSignal.emit()
 
-    @Property(QObject, notify=selectedValueChanged)
+    @Property(QObject, notify=selectionChangedSignal)
     def selectedValue(self) -> AbcCellData:
         if (self._selectedIndex < 0 or self._selectedIndex > len(self._dataObjects) - 1):
             return None
@@ -64,13 +61,33 @@ class AbcDataViewModel(QAbstractListModel, Generic[T]):
 
     # Model properties and functions
 
-    @Property('QVariantList', notify=celldataChanged)
+    @property
     def dataObjects(self) -> List[T]:
         return self._dataObjects
 
-    @dataObjects.deleter
-    def dataObjects(self):
+    @Property(bool, notify=dataChangedSignal)
+    def hasData(self) -> bool:
+        return len(self._dataObjects) > 0
+
+    def addData(self, data: T) -> bool:
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
+        self._dataObjects.append(data)
+        self.endInsertRows()
+        self.dataChangedSignal.emit()
+
+    @Slot(int)
+    def removeData(self, index: int):
+        self.beginRemoveRows(QModelIndex(), index, index)
+        del self._dataObjects[index]
+        self.endRemoveRows()
+        self.dataChangedSignal.emit()
+
+    @Slot()
+    def clearData(self):
+        self.beginRemoveRows(QModelIndex(), 0, len(self._dataObjects) - 1)
         self._dataObjects = []
+        self.endRemoveRows()
+        self.dataChangedSignal.emit()
 
     # Update View
 
@@ -80,22 +97,14 @@ class AbcDataViewModel(QAbstractListModel, Generic[T]):
                 return False
         return True
 
-    def updateView(self):
-        self.updateTableSignal.emit()
-        self.updateGraphSignal.emit()
-
-    def clearView(self):
-        self.clearTableSignal.emit()
-        self.clearGraphSignal.emit()
-
     # ABSTRACT
 
     @abstractmethod
-    def removeData(self, index: int):
+    def getData(self, filepath: str) -> T:
         pass
 
     @abstractmethod
-    def addData(self, data: AbcCellData) -> bool:
+    def listAllData(self) -> List:
         pass
 
 

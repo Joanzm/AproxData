@@ -1,12 +1,12 @@
 from typing import List
-from PySide6.QtCore import Property, Signal, QObject
+from PySide6.QtCore import Property, Signal, QObject, QAbstractTableModel
 
 from .OcvSoc.ViewModel.ocv_soc_vmData import OcvSocDataViewModel
 
 from .OcvSoc.Model.ocv_soc_cellData import OcvSocCellData
 from .OcvSoc.ViewModel.ocv_soc_vmCellDataTable import OcvSocCellDataTable
 from .OcvSoc.ViewModel.ocv_soc_vmCellDataGraph import OcvSocCellDataGraph
-from .OcvSoc.ocv_soc_runnable import OcvSocLoadXlsFileRunner
+from .OcvSoc.ocv_soc_fileRunnable import OcvSocFileRunner
 
 class CellDataAnalyzerModel(QObject):
 
@@ -21,7 +21,7 @@ class CellDataAnalyzerModel(QObject):
         super().__init__()
         self._title = ""
         self._model = OcvSocDataViewModel([])
-        self._dataParser = OcvSocLoadXlsFileRunner(self._model)
+        self._dataParser = OcvSocFileRunner(self._model)
         self._cellDataTable = OcvSocCellDataTable(self._model)
         self._cellDataGraph = OcvSocCellDataGraph(self._model)
         self.vmDataGraphChanged.emit(self._cellDataGraph)
