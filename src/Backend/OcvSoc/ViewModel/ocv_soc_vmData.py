@@ -34,11 +34,12 @@ class OcvSocDataViewModel(AbcDataViewModel[OcvSocCellData]):
             if (l > maxLength):
                 maxLength = l
             headers.append(self.dataObjects[i].fileInfo.fileName)
-        headers.append("Avg Voltage")
+        headers.append("Diff/Avg Voltage")
         allData.append(headers)
         
         if len(self.dataObjects) > 0:
             for i in range(maxLength):
+                floatEntries = []
                 entry = []
                 count = 0
                 avgSoc = 0
@@ -46,14 +47,16 @@ class OcvSocDataViewModel(AbcDataViewModel[OcvSocCellData]):
                     if len(self.dataObjects[j].data) > i:
                         count = count + 1
                         avgSoc = avgSoc + self.dataObjects[j].data[i].soc
-                        entry.append(self.dataObjects[j].data[i].voltage)
+                        floatEntries.append(self.dataObjects[j].data[i].voltage)
+                        entry.append("{:.4f} V".format(self.dataObjects[j].data[i].voltage))
                     else:
                         entry.append(None)
                 if count > 0:
                     #calculate average voltage
-                    entry.append(round(sum(entry) / len(entry), 4))
+                    avgVoltage = sum(floatEntries) / len(floatEntries)
+                    diffVoltage = max(floatEntries) - min(floatEntries)
+                    entry.append("{:.4f} V / {:.4f} V".format(diffVoltage, avgVoltage))
                     #calculate average soc and set as first entry
-                    avgSoc = round(avgSoc / count, 4)
-                    entry.insert(0, avgSoc)
+                    entry.insert(0, "{:.4f} %".format(avgSoc / count))
                     allData.append(entry)
         return allData

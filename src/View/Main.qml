@@ -46,36 +46,52 @@ ApplicationWindow {
 
     GridLayout {
         anchors.fill: parent
-        rows: 2; columns: 2
-        rowSpacing: 2; columnSpacing: 2
+        columns: 2
 
-        FileListView {
+        MainTabBar {
             viewModel: mainmodel
-            Layout.minimumWidth: 100; Layout.minimumHeight: 100
-            Layout.preferredWidth: 50; Layout.preferredHeight: 80
-            Layout.fillWidth: true; Layout.fillHeight: true
+            id: barCtrl
+            Layout.fillHeight: true
         }
 
-        CellDataTableView {
-            viewModel: mainmodel
-            Layout.minimumWidth: 100; Layout.minimumHeight: 100
-            Layout.preferredWidth: 80; Layout.preferredHeight: 80
-            Layout.fillWidth: true; Layout.fillHeight: true
-        }
+        StackLayout {
+            currentIndex: barCtrl.currentIndex
 
-        // FileInfoView {
-        //     viewModel: mainmodel
-        //     Layout.minimumWidth: 100; Layout.minimumHeight: 65
-        //     Layout.preferredWidth: 100; Layout.preferredHeight: 50
-        //     Layout.fillWidth: true; Layout.fillHeight: true
-        // }
+            Item {
+                id: dataTab
 
-        CellDataChartView {
-            viewModel: mainmodel
-            Layout.minimumWidth: 100; Layout.minimumHeight: 85
-            Layout.preferredWidth: 80; Layout.preferredHeight: 80
-            Layout.columnSpan: 2
-            Layout.fillWidth: true; Layout.fillHeight: true
+                GridLayout {
+                    anchors.fill: parent
+                    rows: 2; columns: 2
+                    rowSpacing: 2; columnSpacing: 2
+
+                    FileListView {
+                        viewModel: mainmodel
+                        Layout.minimumWidth: 100; Layout.minimumHeight: 100
+                        Layout.preferredWidth: 50; Layout.preferredHeight: 80
+                        Layout.fillWidth: true; Layout.fillHeight: true
+                    }
+
+                    CellDataTableView {
+                        viewModel: mainmodel
+                        Layout.minimumWidth: 100; Layout.minimumHeight: 100
+                        Layout.preferredWidth: 80; Layout.preferredHeight: 80
+                        Layout.fillWidth: true; Layout.fillHeight: true
+                    }
+
+                    CellDataChartView {
+                        viewModel: mainmodel
+                        Layout.minimumWidth: 100; Layout.minimumHeight: 85
+                        Layout.preferredWidth: 80; Layout.preferredHeight: 80
+                        Layout.columnSpan: 2
+                        Layout.fillWidth: true; Layout.fillHeight: true
+                    }
+                }
+            }
+            Item {
+                id: interpolationTab
+                Rectangle { color: "green" }
+            }
         }
     }
 }
