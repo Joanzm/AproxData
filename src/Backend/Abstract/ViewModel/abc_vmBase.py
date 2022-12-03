@@ -2,19 +2,17 @@ from PySide6.QtCore import Qt, QObject, QAbstractTableModel, QModelIndex, QModel
 from abc import abstractmethod
 from typing import Union
 
-from ..Model.abc_data import AbcData
-
 class AbcVmBaseChanges():
 
     def __init__(self) -> None:
         super().__init__()
 
     @abstractmethod
-    def onDataChanged(self, dataObjects: object, selectedIndex: int, canUpdate: bool):
+    def onDataChanged(self, dataObjects: object, selectedIndex: int):
         pass
 
     @abstractmethod
-    def onSelectionChanged(self, dataObjects: object, selectedIndex: int, canUpdate: bool):
+    def onSelectionChanged(self, dataObjects: object, selectedIndex: int):
         pass
     
     @abstractmethod
@@ -56,18 +54,16 @@ class AbcGraph(AbcVmBaseViewAll, QObject):
         self.viewAllChanged.emit(self._viewAll)
 
     @Slot()
-    def onDataChanged(self, dataObjects: object, selectedIndex: int, canUpdate: bool):
-        if canUpdate:
-            if self._viewAll:
-                self.__updateAll(dataObjects)
-            else:
-                self.__updateSelected(dataObjects, selectedIndex)
+    def onDataChanged(self, dataObjects: object, selectedIndex: int):
+        if self._viewAll:
+            self.__updateAll(dataObjects)
+        else:
+            self.__updateSelected(dataObjects, selectedIndex)
 
     @Slot()
-    def onSelectionChanged(self, dataObjects: object, selectedIndex: int, canUpdate: bool):
-        if canUpdate:
-            if not self._viewAll:
-                self.__updateSelected(dataObjects, selectedIndex)
+    def onSelectionChanged(self, dataObjects: object, selectedIndex: int):
+        if not self._viewAll:
+            self.__updateSelected(dataObjects, selectedIndex)
 
     @Slot()
     def onClearView(self):
@@ -94,7 +90,7 @@ class AbcGraph(AbcVmBaseViewAll, QObject):
     def _removeSeries(self, data: object):
         pass
 
-class AbcTable(AbcVmBaseViewAll, QAbstractTableModel):
+class AbcTable(QAbstractTableModel):
 
     dataChanged = Signal('QVariantList')
     headerDataChanged = Signal(Qt.Orientation, int, int)
@@ -106,15 +102,6 @@ class AbcTable(AbcVmBaseViewAll, QAbstractTableModel):
         self._data = []
 
     # PUBLIC METHODS
-    # Update View
-
-    def onViewAllChanging(self):
-        self.viewAllChanged.emit(self._viewAll)
-
-    @Slot()
-    def onClearView(self):
-        self.clearEntries()
-
     #QAbstractTableModel implementation
 
     @abstractmethod

@@ -11,8 +11,8 @@ class AbcDataList(QAbstractListModel, Generic[T]):
     # Notify global view
 
     # Notify properties
-    dataChangedSignal = Signal(list, int, bool)
-    selectionChangedSignal = Signal(list, int, bool)
+    dataChangedSignal = Signal(list, int)
+    selectionChangedSignal = Signal(list, int)
     clearViewSignal = Signal()
 
     def __init__(self, data: List[T]) -> None:
@@ -22,7 +22,7 @@ class AbcDataList(QAbstractListModel, Generic[T]):
 
     # Update View
 
-    def canUpdateView(self) -> bool:
+    def allowUpdate(self) -> bool:
         for i in range(len(self._dataObjects)):
             if self._dataObjects[i].state == ProcessState.Pendeling or self._dataObjects[i].state == ProcessState.Processing:
                 return False
@@ -33,8 +33,14 @@ class AbcDataList(QAbstractListModel, Generic[T]):
         self.clearViewSignal.emit()
 
     @Slot()
-    def updateView(self):
-        self.dataChangedSignal.emit(self._dataObjects, self._selectedIndex, self.canUpdateView())
+    def dataChanged(self):
+        if self.allowUpdate():
+            self.dataChangedSignal.emit(self._dataObjects, self._selectedIndex)
+
+    @Slot()
+    def selectionChanged(self):
+        if self.allowUpdate():
+            self.selectionChangedSignal.emit(self._dataObjects, self._selectedIndex)
     
     # QAbstractListModel implementation
 
@@ -64,7 +70,7 @@ class AbcDataList(QAbstractListModel, Generic[T]):
     def selectedIndex(self, value: int):
         if (self._selectedIndex != value):
             self._selectedIndex = value
-            self.selectionChangedSignal.emit(self._dataObjects, value, self.canUpdateView())
+            self.selectionChanged()
 
     @Property(QObject, notify=selectionChangedSignal)
     def selectedValue(self) -> AbcData:
@@ -87,21 +93,21 @@ class AbcDataList(QAbstractListModel, Generic[T]):
         self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount())
         self._dataObjects.append(data)
         self.endInsertRows()
-        self.dataChangedSignal.emit(self._dataObjects, self._selectedIndex, self.canUpdateView())
+        self.dataChanged()
 
     @Slot(int)
     def removeData(self, index: int):
         self.beginRemoveRows(QModelIndex(), index, index)
         del self._dataObjects[index]
         self.endRemoveRows()
-        self.dataChangedSignal.emit(self._dataObjects, self._selectedIndex, self.canUpdateView())
+        self.dataChanged()
 
     @Slot()
     def clearData(self):
         self.beginRemoveRows(QModelIndex(), 0, len(self._dataObjects) - 1)
         self._dataObjects = []
         self.endRemoveRows()
-        self.dataChangedSignal.emit(self._dataObjects, self._selectedIndex, self.canUpdateView())
+        self.dataChanged()
 
     # ABSTRACT
 

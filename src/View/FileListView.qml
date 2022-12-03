@@ -2,13 +2,13 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
-import OcvSocDataViewModel 1.0
+import OcvSocDataListViewModel 1.0
 import CellEntries 1.0
 import AbcData 1.0
 import OcvSocCellData 1.0
 
 ColumnLayout {
-    property OcvSocDataViewModel viewModel: null
+    property OcvSocDataListViewModel viewModel: null
 
     Keys.onPressed: (event) => { 
         if (event.key == Qt.Key_F5) 

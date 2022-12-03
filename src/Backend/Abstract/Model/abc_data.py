@@ -24,7 +24,7 @@ class AbcData(QObject, Generic[T]):
     def __init__(self, filepath: str) -> None:
         super().__init__()
         self._fileInfo = FileInfo(filepath)
-        self._celldata = []
+        self._data = []
         self._state = ProcessState.Pendeling
         self._processException = None
 
@@ -34,16 +34,16 @@ class AbcData(QObject, Generic[T]):
 
     @Property('QVariantList')
     def data(self) -> List[type[T]]:
-        return self._celldata
+        return self._data
 
     def deleteEntry(self, row: int):
-        del self._celldata[row]
+        del self._data[row]
 
     def clearData(self):
-        self._celldata.clear()
+        self._data.clear()
 
     def dataLength(self) -> int:
-        return len(self._celldata)
+        return len(self._data)
 
     @Property(FileInfo, notify=fileinfoChanged)
     def fileInfo(self) -> FileInfo:

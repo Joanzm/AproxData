@@ -9,8 +9,8 @@ class OcvSocEntry(AbcEntry):
     (state of charge) value.
     """
 
-    voltageChanged = Signal(float)
-    socChanged = Signal(float)
+    xChanged = Signal(float)
+    yChanged = Signal(float)
 
     def __init__(self) -> None:
         super().__init__()
@@ -20,7 +20,7 @@ class OcvSocEntry(AbcEntry):
         self._voltage = voltage
         self._soc = soc
     
-    @Property(float, notify=voltageChanged)
+    @Property(float, notify=xChanged)
     def voltage(self):
         """
         Getting the voltage value of this entry.
@@ -37,9 +37,9 @@ class OcvSocEntry(AbcEntry):
             raise ValueError(f'Voltage lower than zero: {value}')
         else:
             self._voltage = value
-            self.voltageChanged.emit(value)
+            self.xChanged.emit(value)
 
-    @Property(float, notify=socChanged)
+    @Property(float, notify=yChanged)
     def soc(self):
         """
         Getting the soc value of this entry.
@@ -60,7 +60,7 @@ class OcvSocEntry(AbcEntry):
             raise ValueError(f'Voltage greater than 1.2: {value}')
         else:
             self._soc = value
-            self.socChanged.emit(value)
+            self.yChanged.emit(value)
     
     @Property(QPointF)
     def point(self) -> QPointF:

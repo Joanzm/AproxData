@@ -35,7 +35,7 @@ ApplicationWindow {
                 checked: mainmodel.cellDataTable.viewAll
                 onCheckedChanged: {
                     mainmodel.cellDataTable.viewAll = !mainmodel.cellDataTable.viewAll;
-                    mainmodel.cellDataList.updateView();
+                    mainmodel.cellDataList.dataChanged();
                 }
             }
             MenuItem {
@@ -44,15 +44,14 @@ ApplicationWindow {
                 checked: mainmodel.cellDataGraph.viewAll
                 onCheckedChanged: {
                     mainmodel.cellDataGraph.viewAll = !mainmodel.cellDataGraph.viewAll;
-                    mainmodel.cellDataList.updateView();
+                    mainmodel.cellDataList.dataChanged();
                 }
             }
         }
     }
 
-    GridLayout {
+    RowLayout {
         anchors.fill: parent
-        columns: 2
 
         MainTabBar {
             viewModel: mainmodel
@@ -96,7 +95,19 @@ ApplicationWindow {
             }
             Item {
                 id: interpolationTab
-                Rectangle { color: "green" }
+                
+                ColumnLayout {
+                    anchors.fill: parent
+
+                    InterpolationView {
+                        viewModel: mainmodel.interpolation
+                        Layout.preferredHeight: 50
+                    }
+
+                    LookUpTableView {
+                        Layout.preferredHeight: 50
+                    }
+                }
             }
         }
     }

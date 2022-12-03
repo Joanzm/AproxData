@@ -7,8 +7,8 @@ class OcvSocCellData(AbcData[OcvSocEntry]):
         super().__init__(filename)
     
     def addEntry(self, entry: OcvSocEntry):
-        self._celldata.append(entry)
+        self._data.append(entry)
 
     def add_values(self, voltage: float, soc: float) -> None:
-        self._celldata.append(OcvSocEntry(voltage, soc))
+        self._data.append(OcvSocEntry(voltage, soc))
     

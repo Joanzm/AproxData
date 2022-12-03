@@ -9,6 +9,36 @@ class OcvSocCellDataTable(AbcDataTable):
     def __init__(self) -> None:
         super().__init__()
 
+    # QAbstractTableModel implementation
+
+    displayRole = Qt.UserRole + 1
+
+    def roleNames(self):
+        return {
+            OcvSocCellDataTable.displayRole: b'display'
+        }
+
+    def columnCount(self, parent: Union[QModelIndex, QPersistentModelIndex]) -> int:
+        if len(self._data) > 0:
+            if self._viewAll:
+                return len(self._data[0])
+            else:
+                return 2
+        else:
+            return 0
+
+    def data(self, index: QModelIndex, role: int):
+        if index.isValid():
+            if role == OcvSocCellDataTable.displayRole:
+                if self._viewAll:
+                    return self._data[index.row()][index.column()]
+                else:
+                    if (index.column() == 0):
+                        return self._data[index.row()].soc
+                    elif (index.column() == 1):
+                        return self._data[index.row()].voltage
+        return None
+
     # List all table data
     
     def _listAllData(self, dataObjects: List[AbcData]) -> List:
@@ -56,33 +86,3 @@ class OcvSocCellDataTable(AbcDataTable):
                     entry.insert(0, "{:.4f} %".format(avgSoc / count))
                     allData.append(entry)
         return allData
-
-    # QAbstractTableModel implementation
-
-    displayRole = Qt.UserRole + 1
-
-    def roleNames(self):
-        return {
-            OcvSocCellDataTable.displayRole: b'display'
-        }
-
-    def columnCount(self, parent: Union[QModelIndex, QPersistentModelIndex]) -> int:
-        if len(self._data) > 0:
-            if self._viewAll:
-                return len(self._data[0])
-            else:
-                return 2
-        else:
-            return 0
-
-    def data(self, index: QModelIndex, role: int):
-        if index.isValid():
-            if role == OcvSocCellDataTable.displayRole:
-                if self._viewAll:
-                    return self._data[index.row()][index.column()]
-                else:
-                    if (index.column() == 0):
-                        return self._data[index.row()].soc
-                    elif (index.column() == 1):
-                        return self._data[index.row()].voltage
-        return None

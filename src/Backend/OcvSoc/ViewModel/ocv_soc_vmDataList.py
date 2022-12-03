@@ -1,3 +1,5 @@
+import numpy as np
+
 from PySide6.QtCore import Property, Signal, Property, Slot, QUrl
 from typing import List
 
@@ -6,7 +8,7 @@ from Backend.Abstract.Model.abc_data import AbcData, ProcessState
 from Backend.OcvSoc.Model.ocv_soc_cellData import OcvSocCellData
 from Backend.Abstract.ViewModel.abc_vmDataList import AbcDataList
 
-class OcvSocDataViewModel(AbcDataList[OcvSocCellData]):
+class OcvSocDataListViewModel(AbcDataList[OcvSocCellData]):
     
     runnerStateChanged = Signal(bool)
     startReading = Signal('QVariantList')
@@ -61,6 +63,8 @@ class OcvSocDataViewModel(AbcDataList[OcvSocCellData]):
     def onRunnerStateChanged(self, value: bool):
         self.__runnerFinished = value
         self.runnerStateChanged.emit(value)
+        if value:
+            self.dataChanged()
 
     @Slot(str)
     def onRunnerStartReadingFile(self, filePath: str):
@@ -79,7 +83,6 @@ class OcvSocDataViewModel(AbcDataList[OcvSocCellData]):
 
                 dataObj.clearException()
                 dataObj.state = ProcessState.Finished
-                self.updateView()
             except Exception as e:
                 dataObj.processException = e
 

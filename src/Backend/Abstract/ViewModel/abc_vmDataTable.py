@@ -2,13 +2,10 @@ from PySide6.QtCore import Qt, QObject, Signal, QModelIndex, QPersistentModelInd
 from abc import abstractmethod
 from typing import List, Union
 
-from .abc_vmBase import AbcTable
+from .abc_vmBase import AbcTable, AbcVmBaseViewAll
 from ..Model.abc_data import AbcData
 
-class AbcDataTable(AbcTable, QAbstractTableModel):
-
-    dataChanged = Signal('QVariantList')
-    headerDataChanged = Signal(Qt.Orientation, int, int)
+class AbcDataTable(AbcVmBaseViewAll, AbcTable):
 
     def __init__(self) -> None:
         super().__init__()
@@ -18,19 +15,24 @@ class AbcDataTable(AbcTable, QAbstractTableModel):
     # PUBLIC METHODS
     # Update View
 
-    @Slot()
-    def onDataChanged(self, dataObjects: List[AbcData], selectedIndex: int, canUpdate: bool):
-        if canUpdate:
-            if self._viewAll:
-                self.__updateAll(dataObjects)
-            else:
-                self.__updateSelected(dataObjects, selectedIndex)
+    def onViewAllChanging(self):
+        self.viewAllChanged.emit(self._viewAll)
 
     @Slot()
-    def onSelectionChanged(self, dataObjects: List[AbcData], selectedIndex: int, canUpdate: bool):
-        if canUpdate:
-            if not self._viewAll:
-                self.__updateSelected(dataObjects, selectedIndex)
+    def onDataChanged(self, dataObjects: List[AbcData], selectedIndex: int):
+        if self._viewAll:
+            self.__updateAll(dataObjects)
+        else:
+            self.__updateSelected(dataObjects, selectedIndex)
+
+    @Slot()
+    def onSelectionChanged(self, dataObjects: List[AbcData], selectedIndex: int):
+        if not self._viewAll:
+            self.__updateSelected(dataObjects, selectedIndex)
+
+    @Slot()
+    def onClearView(self):
+        self.clearEntries()
 
     #QAbstractTableModel implementation
 

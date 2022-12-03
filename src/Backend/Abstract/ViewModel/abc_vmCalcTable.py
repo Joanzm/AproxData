@@ -16,11 +16,11 @@ class AbcCalcTable(AbcVmBaseViewAll):
         pass
 
     @Slot()
-    def onDataChanged(self, dataObjects: List[AbcData], selectedIndex: int, canUpdate: bool):
+    def onDataChanged(self, dataObjects: List[AbcData], selectedIndex: int):
         pass
 
     @Slot()
-    def onSelectionChanged(self, dataObjects: List[AbcData], selectedIndex: int, canUpdate: bool):
+    def onSelectionChanged(self, dataObjects: List[AbcData], selectedIndex: int):
         pass
 
     @Slot()
