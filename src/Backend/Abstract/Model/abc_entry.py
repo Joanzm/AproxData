@@ -1,4 +1,4 @@
-from PySide6.QtCore import QObject, QPointF, Signal, Property
+from PySide6.QtCore import QObject, QPointF, Property
 from abc import abstractmethod
 
 class AbcEntry(QObject):

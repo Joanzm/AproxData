@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import CellDataAnalyzerModel 1.0
+import CellDataAnalyzerViewModel 1.0
 
 ListView {
-    property CellDataAnalyzerModel viewModel: null
+    property CellDataAnalyzerViewModel viewModel: null
     id: barCtrl
     width: 80
 

@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtCharts
-import CellDataAnalyzerModel 1.0
+import OcvSocCellDataGraph 1.0
 
 Rectangle {
-    property CellDataAnalyzerModel viewModel: null
+    property OcvSocCellDataGraph viewModel: null
 
     ChartView {
         id: cellDataChartView
@@ -27,7 +27,7 @@ Rectangle {
         }
 
         Connections {
-            target: viewModel.cellDataGraph
+            target: viewModel
             function onSeriesAdded(value) { 
 
                 var series = cellDataChartView.createSeries(ChartView.SeriesTypeSpline, value.fileInfo.filePath, axisX, axisY);

@@ -1,12 +1,12 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import CellDataAnalyzerModel 1.0
+import OcvSocCellDataTable 1.0
 
 TableView {
-    property CellDataAnalyzerModel viewModel: null
+    property OcvSocCellDataTable viewModel: null
     id: table
-    model: viewModel.cellDataTable
+    model: viewModel
     //leftMargin: rowsHeader.implicitWidth
     topMargin: columnsHeader.implicitHeight
     
@@ -29,7 +29,7 @@ TableView {
                 Text {
                     anchors.centerIn: parent
                     font.bold: true
-                    text: viewModel.cellDataTable.headerData(modelData, Qt.Horizontal)
+                    text: viewModel.headerData(modelData, Qt.Horizontal)
                 }
             }
         }

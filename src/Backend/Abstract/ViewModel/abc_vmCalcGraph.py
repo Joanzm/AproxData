@@ -3,30 +3,26 @@ from abc import abstractmethod
 from typing import List, TypeVar, Generic, Union
 
 from .abc_vmBase import AbcVmBaseViewAll
-from .abc_vmData import AbcDataViewModel, AbcCellData
+from ..Model.abc_data import AbcData
 
-T = TypeVar("T", bound=AbcDataViewModel)
+class AbcCalcGraph(AbcVmBaseViewAll):
 
-class AbcCalcGraph(AbcVmBaseViewAll, Generic[T]):
-
-    def __init__(self, model: T) -> None:
-        super().__init__(model)
+    def __init__(self) -> None:
+        super().__init__()
     
-    # View all implementation
+    # PUBLIC METHODS: Update view
 
     def onViewAllChanging(self):
         pass
-    
-    # Update slots
 
     @Slot()
-    def onDataChanged(self):
+    def onDataChanged(self, dataObjects: List[AbcData], selectedIndex: int, canUpdate: bool):
         pass
 
     @Slot()
-    def onSelectionChanged(self):
+    def onSelectionChanged(self, dataObjects: List[AbcData], selectedIndex: int, canUpdate: bool):
         pass
 
     @Slot()
-    def clear(self):
+    def onClearView(self):
         pass

@@ -1,62 +1,89 @@
+from PySide6.QtCore import Property, Signal, Property, Slot, QUrl
 from typing import List
-from PySide6.QtCore import QModelIndex, Slot
 
-from Backend.Abstract.ViewModel.abc_vmData import AbcDataViewModel, AbcCellData
+from Backend.Abstract.Model.abc_data import AbcData, ProcessState
+
 from Backend.OcvSoc.Model.ocv_soc_cellData import OcvSocCellData
+from Backend.Abstract.ViewModel.abc_vmDataList import AbcDataList
 
-class OcvSocDataViewModel(AbcDataViewModel[OcvSocCellData]):
+class OcvSocDataViewModel(AbcDataList[OcvSocCellData]):
     
+    runnerStateChanged = Signal(bool)
+    startReading = Signal('QVariantList')
+
     def __init__(self, data: List[OcvSocCellData]) -> None:
         super().__init__(data)
+        self.__runnerFinished = True
+    
+    # PUBLIC METHODS
+    # Implement abstract methods
     
     def getData(self, filepath: str) -> OcvSocCellData:
         for i in range(len(self._dataObjects)):
             if (self._dataObjects[i].fileInfo.filePath == filepath):
                 return self._dataObjects[i]
         return None
+    
+    # Loading new files
 
-    def listAllData(self) -> List:
-        """
-        Returns a list of all values in self.dataObjects.
-        The first entry is a list of header strings.
-        Every following entry (index i) is a list
-        of float values which are build as follows (n is length of array):
-        - [0] = Average x - Value of all self.dataObjects with index i (SOC)
-        - [1] ... [n-2] = y - Values of all self.dataObjects with index i (Voltage)
-        - [n-1] = Average y - Value of all self.dataObjects with index i (Voltage)"""
-        allData = []
+    @Slot('QVariantList')
+    def loadElements(self, url: List[QUrl]) -> None:
+        if self.__runnerFinished:
+            files = []
+            for i in range(len(url)):
+                files.append(url[i].toLocalFile())
+                data = self.getData(url[i].toLocalFile())
+                if (data is None):
+                    self.addData(OcvSocCellData(files[i]))
+                else:
+                    data.clearData()
+                    data.state = ProcessState.Pendeling
+            self.startReading.emit(files)
+            self.clearView()
 
-        #Calculate headers and max row length
-        headers = ["Avg SOC"]
-        maxLength = 0
-        for i in range(len(self.dataObjects)):
-            l = len(self.dataObjects[i].data)
-            if (l > maxLength):
-                maxLength = l
-            headers.append(self.dataObjects[i].fileInfo.fileName)
-        headers.append("Diff/Avg Voltage")
-        allData.append(headers)
-        
-        if len(self.dataObjects) > 0:
-            for i in range(maxLength):
-                floatEntries = []
-                entry = []
-                count = 0
-                avgSoc = 0
-                for j in range(len(self.dataObjects)):
-                    if len(self.dataObjects[j].data) > i:
-                        count = count + 1
-                        avgSoc = avgSoc + self.dataObjects[j].data[i].soc
-                        floatEntries.append(self.dataObjects[j].data[i].voltage)
-                        entry.append("{:.4f} V".format(self.dataObjects[j].data[i].voltage))
-                    else:
-                        entry.append(None)
-                if count > 0:
-                    #calculate average voltage
-                    avgVoltage = sum(floatEntries) / len(floatEntries)
-                    diffVoltage = max(floatEntries) - min(floatEntries)
-                    entry.append("{:.4f} V / {:.4f} V".format(diffVoltage, avgVoltage))
-                    #calculate average soc and set as first entry
-                    entry.insert(0, "{:.4f} %".format(avgSoc / count))
-                    allData.append(entry)
-        return allData
+    @Slot(int)
+    def reloadSingleElementByIndex(self, index: int) -> None:
+        if index >= 0 and index < len(self.dataObjects):
+            self.reloadSingleElement(self.dataObjects[index])
+
+    @Slot(AbcData)
+    def reloadSingleElement(self, obj: AbcData) -> None:
+        if obj is not None and self.__runnerFinished:
+            self.startReading.emit([obj.fileInfo.filePath])
+    
+    @Property(bool, notify=runnerStateChanged)
+    def runnerFinished(self) -> bool:
+        return self.__runnerFinished
+
+    # Connector to OcvSocFileRunner
+
+    @Slot(bool)
+    def onRunnerStateChanged(self, value: bool):
+        self.__runnerFinished = value
+        self.runnerStateChanged.emit(value)
+
+    @Slot(str)
+    def onRunnerStartReadingFile(self, filePath: str):
+        self.getData(filePath).state = ProcessState.Processing
+    
+    @Slot(str, 'QVariantList')
+    def onRunnerFinishedFile(self, filePath: str, data: List[List[float]]):
+        dataObj = self.getData(filePath)
+        if dataObj is not None:
+            try:
+                # clear data before adding new elements
+                dataObj.clearData()
+                # data[0][0] is the highest capacity of the data
+                for valuePair in data:
+                    dataObj.add_values(valuePair[1], valuePair[0])
+
+                dataObj.clearException()
+                dataObj.state = ProcessState.Finished
+                self.updateView()
+            except Exception as e:
+                dataObj.processException = e
+
+    @Slot(str, Exception)
+    def onRunnerFaultedReading(self, filePath: str, e: Exception):
+        dataObj = self.getData(filePath)
+        dataObj.processException = e

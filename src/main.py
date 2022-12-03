@@ -3,19 +3,24 @@ import sys
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQml import qmlRegisterType
-from Backend.Abstract.Model.abc_cellData import AbcCellData
+
+from Backend.main_vm import CellDataAnalyzerViewModel, OcvSocDataViewModel, OcvSocCellDataTable, OcvSocCellDataGraph
+
+from Backend.Abstract.Model.abc_data import AbcData
 from Backend.OcvSoc.Model.ocv_soc_cellData import OcvSocCellData
 from Backend.OcvSoc.Model.ocv_soc_entry import OcvSocEntry
-from Backend.main_model import CellDataAnalyzerModel
 
 if __name__ == "__main__":
     """
     Starts the tkinter GUI
     """
     app = QApplication(sys.argv)
-    qmlRegisterType(CellDataAnalyzerModel, 'CellDataAnalyzerModel', 1, 0, 'CellDataAnalyzerModel')
-    qmlRegisterType(AbcCellData, 'AbcCellData', 1, 0, 'AbcCellData')
+    qmlRegisterType(CellDataAnalyzerViewModel, 'CellDataAnalyzerViewModel', 1, 0, 'CellDataAnalyzerViewModel')
+    qmlRegisterType(OcvSocDataViewModel, 'OcvSocDataViewModel', 1, 0, 'OcvSocDataViewModel')
+    qmlRegisterType(OcvSocCellDataTable, 'OcvSocCellDataTable', 1, 0, 'OcvSocCellDataTable')
+    qmlRegisterType(OcvSocCellDataGraph, 'OcvSocCellDataGraph', 1, 0, 'OcvSocCellDataGraph')
     qmlRegisterType(OcvSocCellData, 'OcvSocCellData', 1, 0, 'OcvSocCellData')
+    qmlRegisterType(AbcData, 'AbcData', 1, 0, 'AbcData')
     qmlRegisterType(OcvSocEntry, 'CellEntries', 1, 0, 'OcvSocEntry')
 
     engine = QQmlApplicationEngine()

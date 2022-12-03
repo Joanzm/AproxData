@@ -3,7 +3,7 @@ from PySide6.QtCore import Property, Signal, QEnum, QObject
 from abc import abstractmethod
 from typing import List, TypeVar, Generic
 
-from ...basic_models import FileInfo
+from ..Base.fileInfo import FileInfo
 from .abc_entry import AbcEntry
 
 T = TypeVar("T", bound = AbcEntry)
@@ -15,7 +15,7 @@ class ProcessState(IntEnum):
     Finished = 2
     Faulted = 3
 
-class AbcCellData(QObject, Generic[T]):
+class AbcData(QObject, Generic[T]):
 
     stateChanged = Signal()
     processExcepionChanged = Signal()

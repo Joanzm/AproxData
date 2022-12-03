@@ -1,7 +1,7 @@
 from .ocv_soc_entry import OcvSocEntry
-from Backend.Abstract.Model.abc_cellData import AbcCellData
+from Backend.Abstract.Model.abc_data import AbcData
 
-class OcvSocCellData(AbcCellData[OcvSocEntry]):
+class OcvSocCellData(AbcData[OcvSocEntry]):
 
     def __init__(self, filename: str) -> None:
         super().__init__(filename)

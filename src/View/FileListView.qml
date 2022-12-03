@@ -2,17 +2,17 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
+import OcvSocDataViewModel 1.0
 import CellEntries 1.0
-import CellDataAnalyzerModel 1.0
-import AbcCellData 1.0
+import AbcData 1.0
 import OcvSocCellData 1.0
 
 ColumnLayout {
-    property CellDataAnalyzerModel viewModel: null
+    property OcvSocDataViewModel viewModel: null
 
     Keys.onPressed: (event) => { 
         if (event.key == Qt.Key_F5) 
-            viewModel.dataParser.reloadSingleElementByIndex(_lv.currentIndex)
+            viewModel.reloadSingleElementByIndex(_lv.currentIndex)
     }
 
     ListView {
@@ -20,8 +20,8 @@ ColumnLayout {
         Layout.fillWidth: true
 
         id: _lv
-        model: viewModel.model
-        currentIndex: viewModel.model.selectedIndex
+        model: viewModel
+        currentIndex: viewModel.selectedIndex
 
         highlightResizeDuration: 0
         highlightResizeVelocity: -1 
@@ -34,7 +34,7 @@ ColumnLayout {
             MouseArea {
                 id: _itemArea
                 anchors.fill: parent
-                onClicked: viewModel.model.selectedIndex = index
+                onClicked: viewModel.selectedIndex = index
                 hoverEnabled: true
 
                 Rectangle {
@@ -111,7 +111,7 @@ ColumnLayout {
 
                                 Text {
                                     text: "(Reload on F5)"
-                                    visible: _lvItem.ListView.isCurrentItem && viewModel.dataParser.workerFinished
+                                    visible: _lvItem.ListView.isCurrentItem && viewModel.runnerFinished
                                 }
                             }
                         }
@@ -121,9 +121,9 @@ ColumnLayout {
                             Layout.minimumWidth: 25
 
                             text: "X"
-                            enabled: viewModel.dataParser.workerFinished
+                            enabled: viewModel.runnerFinished
                             onClicked: {
-                                viewModel.model.removeData(index)
+                                viewModel.removeData(index)
                             }
                         }
                     }
@@ -145,7 +145,7 @@ ColumnLayout {
 
             id: loadButton
             text: "Load"
-            enabled: viewModel.dataParser.workerFinished
+            enabled: viewModel.runnerFinished
             onClicked: {
                 xlsFileDialog.visible = true
             }
@@ -156,7 +156,7 @@ ColumnLayout {
                 nameFilters: "XLS Files (*.xls)"
                 fileMode: "OpenFiles"
                 onAccepted: {
-                    mainmodel.dataParser.loadElements(xlsFileDialog.selectedFiles)
+                    viewModel.loadElements(xlsFileDialog.selectedFiles)
                 }
             }
         }
@@ -166,9 +166,9 @@ ColumnLayout {
 
             id: clearButton
             text: "Clear"
-            enabled: viewModel.dataParser.workerFinished && viewModel.model.hasData
+            enabled: viewModel.runnerFinished && viewModel.hasData
             onClicked: {
-                if (viewModel.model.hasData) {
+                if (viewModel.hasData) {
                     yesNoClearDialog.visible = true
                 }  
             }
@@ -184,7 +184,7 @@ ColumnLayout {
                 }
 
                 onAccepted: {
-                    viewModel.model.clearData()
+                    viewModel.clearData()
                 }
             }
         }

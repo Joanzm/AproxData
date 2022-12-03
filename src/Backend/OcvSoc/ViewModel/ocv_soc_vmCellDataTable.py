@@ -1,13 +1,61 @@
 from PySide6.QtCore import Qt, QModelIndex, QPersistentModelIndex
-from typing import Union
+from typing import Union, List
 
-from .ocv_soc_vmData import OcvSocDataViewModel
-from Backend.Abstract.ViewModel.abc_vmCellDataTable import AbcCellDataTable
+from Backend.Abstract.Model.abc_data import AbcData
+from Backend.Abstract.ViewModel.abc_vmDataTable import AbcDataTable
 
-class OcvSocCellDataTable(AbcCellDataTable[OcvSocDataViewModel]):
+class OcvSocCellDataTable(AbcDataTable):
 
-    def __init__(self, model: OcvSocDataViewModel) -> None:
-        super().__init__(model)
+    def __init__(self) -> None:
+        super().__init__()
+
+    # List all table data
+    
+    def _listAllData(self, dataObjects: List[AbcData]) -> List:
+        """
+        Returns a list of all values in self.dataObjects.
+        The first entry is a list of header strings.
+        Every following entry (index i) is a list
+        of float values which are build as follows (n is length of array):
+        - [0] = Average x - Value of all self.dataObjects with index i (SOC)
+        - [1] ... [n-2] = y - Values of all self.dataObjects with index i (Voltage)
+        - [n-1] = Average and max difference y - Value of all self.dataObjects with index i (Voltage)"""
+        allData = []
+
+        #Calculate headers and max row length
+        headers = ["Avg SOC"]
+        maxLength = 0
+        for i in range(len(dataObjects)):
+            l = len(dataObjects[i].data)
+            if (l > maxLength):
+                maxLength = l
+            headers.append(dataObjects[i].fileInfo.fileName)
+        headers.append("Diff/Avg Voltage")
+        allData.append(headers)
+        
+        if len(dataObjects) > 0:
+            for i in range(maxLength):
+                floatEntries = []
+                entry = []
+                count = 0
+                avgSoc = 0
+                for j in range(len(dataObjects)):
+                    if len(dataObjects[j].data) > i:
+                        count = count + 1
+                        avgSoc = avgSoc + dataObjects[j].data[i].soc
+                        floatEntries.append(dataObjects[j].data[i].voltage)
+                        entry.append("{:.4f} V".format(dataObjects[j].data[i].voltage))
+                    else:
+                        entry.append(None)
+                if count > 0:
+                    #calculate average voltage
+                    avgVoltage = sum(floatEntries) / len(floatEntries)
+                    diffVoltage = max(floatEntries) - min(floatEntries)
+                    entry.append("{:.4f} V / {:.4f} V".format(diffVoltage, avgVoltage))
+                    #calculate average soc and set as first entry
+                    entry.insert(0, "{:.4f} %".format(avgSoc / count))
+                    allData.append(entry)
+        return allData
 
     # QAbstractTableModel implementation
 
@@ -21,7 +69,7 @@ class OcvSocCellDataTable(AbcCellDataTable[OcvSocDataViewModel]):
     def columnCount(self, parent: Union[QModelIndex, QPersistentModelIndex]) -> int:
         if len(self._data) > 0:
             if self._viewAll:
-                return len(self._model.dataObjects) + 2
+                return len(self._data[0])
             else:
                 return 2
         else:

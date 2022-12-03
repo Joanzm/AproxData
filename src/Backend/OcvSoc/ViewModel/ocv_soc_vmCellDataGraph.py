@@ -1,7 +1,18 @@
-from .ocv_soc_vmData import OcvSocDataViewModel, OcvSocCellData
-from Backend.Abstract.ViewModel.abc_vmCellDataGraph import AbcCellDataGraph
+from PySide6.QtCore import Signal
 
-class OcvSocCellDataGraph(AbcCellDataGraph[OcvSocDataViewModel]):
+from Backend.Abstract.Model.abc_data import AbcData
+from Backend.Abstract.ViewModel.abc_vmBase import AbcGraph
 
-    def __init__(self, model: OcvSocDataViewModel) -> None:
-        super().__init__(model)
+class OcvSocCellDataGraph(AbcGraph):
+
+    seriesAdded = Signal(AbcData)
+    seriesRemoved = Signal(AbcData)
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def _addSeries(self, data: AbcData):
+        self.seriesAdded.emit(data)
+
+    def _removeSeries(self, data: AbcData):
+        self.seriesRemoved.emit(data)

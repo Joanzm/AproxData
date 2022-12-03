@@ -2,8 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import CellEntries 1.0
-import CellDataAnalyzerModel 1.0
-import AbcCellData 1.0
+import CellDataAnalyzerViewModel 1.0
+import AbcData 1.0
 import OcvSocCellData 1.0
 // import Graphing 1.0
 
@@ -12,16 +12,16 @@ ApplicationWindow {
     visible: true
     width: 1200; height: 800
     title: "Cell Data Analyzer"
-    property QtObject mainmodel: CellDataAnalyzerModel{ }
+    property QtObject mainmodel: CellDataAnalyzerViewModel{ }
 
     menuBar: MenuBar {
-        enabled: mainmodel.dataParser.workerFinished
+        enabled: mainmodel.cellDataList.runnerFinished
         Menu {
             title: qsTr("File")
-            MenuItem {
+            /*MenuItem {
                 text: qsTr("&Open")
                 onTriggered: fileDialog.visible = true            
-            }
+            }*/
             MenuItem {
                 text: qsTr("Exit")               
                 onTriggered: Qt.quit();
@@ -33,13 +33,19 @@ ApplicationWindow {
                 text: qsTr("Show all data in table")
                 checkable: true
                 checked: mainmodel.cellDataTable.viewAll
-                onCheckedChanged: mainmodel.cellDataTable.viewAll = !mainmodel.cellDataTable.viewAll
+                onCheckedChanged: {
+                    mainmodel.cellDataTable.viewAll = !mainmodel.cellDataTable.viewAll;
+                    mainmodel.cellDataList.updateView();
+                }
             }
             MenuItem {
                 text: qsTr("Show all graphs")
                 checkable: true
                 checked: mainmodel.cellDataGraph.viewAll
-                onCheckedChanged: mainmodel.cellDataGraph.viewAll = !mainmodel.cellDataGraph.viewAll
+                onCheckedChanged: {
+                    mainmodel.cellDataGraph.viewAll = !mainmodel.cellDataGraph.viewAll;
+                    mainmodel.cellDataList.updateView();
+                }
             }
         }
     }
@@ -66,21 +72,21 @@ ApplicationWindow {
                     rowSpacing: 2; columnSpacing: 2
 
                     FileListView {
-                        viewModel: mainmodel
+                        viewModel: mainmodel.cellDataList
                         Layout.minimumWidth: 100; Layout.minimumHeight: 100
                         Layout.preferredWidth: 50; Layout.preferredHeight: 80
                         Layout.fillWidth: true; Layout.fillHeight: true
                     }
 
                     CellDataTableView {
-                        viewModel: mainmodel
+                        viewModel: mainmodel.cellDataTable
                         Layout.minimumWidth: 100; Layout.minimumHeight: 100
                         Layout.preferredWidth: 80; Layout.preferredHeight: 80
                         Layout.fillWidth: true; Layout.fillHeight: true
                     }
 
                     CellDataChartView {
-                        viewModel: mainmodel
+                        viewModel: mainmodel.cellDataGraph
                         Layout.minimumWidth: 100; Layout.minimumHeight: 85
                         Layout.preferredWidth: 80; Layout.preferredHeight: 80
                         Layout.columnSpan: 2
