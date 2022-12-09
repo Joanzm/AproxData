@@ -17,6 +17,7 @@ class OcvSocInterpolation(AbcTable):
         self._lowerLookUpTableSize = 2
         self._upperLookUpTableSize = 20
         self._currDataObjects = []
+        self._headers = ['Size', 'Avg Deviation', 'Max Deviation']
 
     # PUBLIC METHODS
     # Setting properties
@@ -41,9 +42,10 @@ class OcvSocInterpolation(AbcTable):
 
     @Slot()
     def interpolate(self):
-        self._val = self._interpolation.calculate(self._currDataObjects, 
+        itp = self._interpolation.calculate(self._currDataObjects, 
             self._lowerLookUpTableSize, 
             self._upperLookUpTableSize)
+        self.__update(itp)
 
     # Update View
     # QAbstractTableModel implementation
@@ -60,24 +62,30 @@ class OcvSocInterpolation(AbcTable):
         }
 
     def columnCount(self, parent: Union[QModelIndex, QPersistentModelIndex]) -> int:
-        if len(self._data) > 0:
-            if self._viewAll:
-                return len(self._data[0])
-            else:
-                return 2
-        else:
-            return 0
+        return len(self._headers)
 
     def data(self, index: QModelIndex, role: int):
         if index.isValid():
             if role == OcvSocInterpolation.displayRole:
-                if self._viewAll:
-                    return self._data[index.row()][index.column()]
+                if (index.column() == 0):
+                    return self._data[index.row()][0]
                 else:
-                    if (index.column() == 0):
-                        return self._data[index.row()].soc
-                    elif (index.column() == 1):
-                        return self._data[index.row()].voltage
+                    val = None
+                    prevVal = None
+                    if (index.column() == 1):
+                        val = self._interpolation.getAverageDeviation(self._data[index.row()][1])
+                        if index.row() > 0:
+                            prevVal = self._interpolation.getAverageDeviation(self._data[index.row() - 1][1])
+                    elif (index.column() == 2):
+                        val = self._interpolation.getMaxDeviation(self._data[index.row()][1])
+                        if index.row() > 0:
+                            prevVal = self._interpolation.getMaxDeviation(self._data[index.row() - 1][1])
+                    
+                    if val is not None:
+                        if prevVal is not None:
+                            return "{:.3f} % ({:+.3f} %)".format(val * 100, (val - prevVal) * 100)
+                        else:
+                            return "{:.3f} %".format(val * 100)
         return None
 
     @Slot(QObject)
@@ -90,11 +98,10 @@ class OcvSocInterpolation(AbcTable):
     # PRIVATE/PROTECTED METHODS
     # Manipulate data
 
-    def __update(self, dataObjects: List[OcvSocCellData]):
+    def __update(self, data: List):
         self.clearEntries()
-        self._headers = dataObjects.pop(0)
         self.headerDataChanged.emit(Qt.Orientation.Horizontal, 0, len(self._headers) - 1)
-        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount() + (len(dataObjects) - 1))
-        self._data = dataObjects
+        self.beginInsertRows(QModelIndex(), self.rowCount(), self.rowCount() + (len(data) - 1))
+        self._data = data
         self.endInsertRows()
         self.dataChanged.emit(self._data)

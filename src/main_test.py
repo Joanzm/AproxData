@@ -6,7 +6,7 @@ def my_func(a):
     return np.array([factor, offset], dtype=np.float32)
 
 if __name__ == "__main__":
-    a = np.arange(202, dtype=np.float32).reshape(101, 2)
+    """ a = np.arange(202, dtype=np.float32).reshape(101, 2)
     print(a)
     b = np.round(np.linspace(0, 100, 7, dtype=np.int64), 0)
     print(b)
@@ -24,4 +24,9 @@ if __name__ == "__main__":
     gRed = gRepeat[1:gRepeat.shape[0] - 1]
     gResize = gRed.reshape((int(gRed.shape[0] / 2), 4))
     gCalc = np.apply_along_axis(my_func, 1, gResize)
-    print(gCalc)
+    print(gCalc) """
+    select = np.array([0, 33, 66, 100], np.int64)
+    eleCounts = select[1:select.shape[0]] - select[0:select.shape[0] - 1]
+    #print(eleCounts)
+    a = np.array([[0, 1, 7, 3, 4],[5, 6, 2, 8, 9]], np.float32)
+    print(np.max(a[:, -1], axis=0))

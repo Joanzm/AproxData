@@ -7,7 +7,6 @@ TableView {
     property OcvSocCellDataTable viewModel: null
     id: table
     model: viewModel
-    //leftMargin: rowsHeader.implicitWidth
     topMargin: columnsHeader.implicitHeight
     
     columnWidthProvider: function (column) { 
