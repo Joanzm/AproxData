@@ -5,7 +5,7 @@ from typing import List
 
 from Backend.Abstract.Model.abc_data import AbcData, ProcessState
 
-from Backend.OcvSoc.Model.ocv_soc_cellData import OcvSocCellData
+from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
 from Backend.Abstract.ViewModel.abc_vmDataList import AbcDataList
 
 class OcvSocDataListViewModel(AbcDataList[OcvSocCellData]):
