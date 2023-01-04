@@ -2,7 +2,7 @@ import numpy as np
 from numpy import ndarray, dtype, float32
 from typing import List
 
-from Backend.OcvSoc.Model.ocv_soc_cellData import OcvSocCellData
+from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
 
 class OcvSoc2DLinearInterpolation:
 
