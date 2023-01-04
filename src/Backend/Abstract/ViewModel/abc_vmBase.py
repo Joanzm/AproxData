@@ -120,10 +120,9 @@ class AbcTable(QAbstractTableModel):
     def addEntries(self, obj: object):
         pass
 
-    @Slot(int, Qt.Orientation, result="QVariant")
-    def headerData(self, section: int, orientation: Qt.Orientation, role: int = ...):
-        if (role == Qt.DisplayRole and orientation == Qt.Orientation.Horizontal):
-            return self._headers[section]
+    @Slot(int, result="QVariant")
+    def getColumnHeaderData(self, section: int):
+        return self._headers[section]
 
     def rowCount(self, parent=QModelIndex()):
        return len(self._data)

@@ -45,6 +45,8 @@ RowLayout {
     }
 
     TableView {
+        property int hoveredRow: -1
+
         id: table
         model: viewModel
         Layout.preferredHeight: 50
@@ -60,7 +62,7 @@ RowLayout {
         Row {
             id: columnsHeader
             y: table.contentY
-            z: 2
+            z: 3
             Repeater {
                 model: table.columns > 0 ? table.columns : 1
                 Rectangle {
@@ -71,20 +73,51 @@ RowLayout {
                     Text {
                         anchors.centerIn: parent
                         font.bold: true
-                        text: viewModel.headerData(modelData, Qt.Horizontal)
+                        text: viewModel.getColumnHeaderData(modelData)
                     }
                 }
             }
         }
 
+        /*MouseArea {
+            id: _tableArea
+            z: 100
+            anchors.fill: parent
+            hoverEnabled: true
+            onExited: {
+                console.log(table.currentRow)
+                table.hoveredRow = -1
+            }
+        }*/
+
         delegate: Rectangle {
+            z: 1
+            id: itemDelegate
             border.width: 1
             implicitWidth: table.columnWidthProvider(column)
             implicitHeight: 20
+            color: row == table.hoveredRow ? (row == viewModel.selectedRow ? "lightsteelblue" : "#DFDFDF") : (row == viewModel.selectedRow ? "lightsteelblue" : "white")
 
             Text {
                 anchors.centerIn: parent
                 text: model.display
+            }
+
+            MouseArea {
+                id: _selectArea
+                z: 2
+                anchors.fill: parent
+                hoverEnabled: true
+                onClicked: {
+                    viewModel.selectedRow = row
+                }
+                onEntered: {
+                    table.hoveredRow = row
+                }
+                onExited: {
+                    if (table.hoveredRow == row)
+                        table.hoveredRow = -1
+                }
             }
         }
 

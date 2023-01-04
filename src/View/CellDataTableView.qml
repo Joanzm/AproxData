@@ -28,7 +28,7 @@ TableView {
                 Text {
                     anchors.centerIn: parent
                     font.bold: true
-                    text: viewModel.headerData(modelData, Qt.Horizontal)
+                    text: viewModel.getColumnHeaderData(modelData)
                 }
             }
         }

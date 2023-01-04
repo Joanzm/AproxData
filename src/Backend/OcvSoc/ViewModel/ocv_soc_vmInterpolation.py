@@ -8,12 +8,14 @@ from Backend.Abstract.ViewModel.abc_vmBase import AbcTable
 
 class OcvSocInterpolation(AbcTable):
 
+    selectedRowChanged = Signal(int)
     lowerLookUpTableSizeChanged = Signal(int)
     upperLookUpTableSizeChanged = Signal(int)
 
     def __init__(self) -> None:
         super().__init__()
         self._interpolation = OcvSoc2DLinearInterpolation()
+        self._selectedRow = 0
         self._lowerLookUpTableSize = 2
         self._upperLookUpTableSize = 20
         self._currDataObjects = []
@@ -21,6 +23,15 @@ class OcvSocInterpolation(AbcTable):
 
     # PUBLIC METHODS
     # Setting properties
+
+    @Property(int, notify=selectedRowChanged)
+    def selectedRow(self) -> int:
+        return self._selectedRow
+
+    @selectedRow.setter
+    def selectedRow(self, value: int):
+        self._selectedRow = value
+        self.selectedRowChanged.emit(value)
 
     @Property(int, notify=lowerLookUpTableSizeChanged)
     def lowerLookUpTableSize(self) -> int:

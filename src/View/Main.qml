@@ -96,15 +96,20 @@ ApplicationWindow {
             Item {
                 id: interpolationTab
                 
-                ColumnLayout {
+                GridLayout {
                     anchors.fill: parent
 
                     InterpolationView {
                         viewModel: mainmodel.interpolation
                         Layout.preferredHeight: 50
+                        Layout.columnSpan: 2
                     }
 
                     LookUpTableView {
+                        Layout.preferredHeight: 50
+                    }
+
+                    LookUpTableChartView {
                         Layout.preferredHeight: 50
                     }
                 }
