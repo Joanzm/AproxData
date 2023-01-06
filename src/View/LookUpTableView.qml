@@ -1,8 +1,20 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import OcvSocCellDataTable 1.0
+import OcvSocInterpolation 1.0
 
-ColumnLayout {
-    
+Rectangle {
+    property OcvSocInterpolation viewModel: null
+    color: "white"
+
+    TextArea {
+        id: lookUpTextField
+
+        Connections {
+            target: viewModel
+            function onSelectedRowChanged(value) {
+                lookUpTextField.text = viewModel.lookUpTable
+            }
+        }
+    }
 }

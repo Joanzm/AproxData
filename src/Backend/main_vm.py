@@ -5,6 +5,7 @@ from .Abstract.ViewModel.abc_vmBase import AbcVmBaseChanges
 from .OcvSoc.ViewModel.ocv_soc_vmDataList import OcvSocDataListViewModel
 
 from .OcvSoc.ViewModel.ocv_soc_vmInterpolation import OcvSocInterpolation
+from .OcvSoc.ViewModel.ocv_soc_vmLookupTable import OcvSocLookUpTable
 from .OcvSoc.ViewModel.ocv_soc_vmCellDataTable import OcvSocCellDataTable
 from .OcvSoc.ViewModel.ocv_soc_vmCellDataGraph import OcvSocCellDataGraph
 from .OcvSoc.Model.ocv_soc_fileRunnable import OcvSocFileRunner
@@ -30,8 +31,8 @@ class CellDataAnalyzerViewModel(QObject):
         self._cellDataGraph = OcvSocCellDataGraph()
         self.connectVmBaseSignals(self._cellDataGraph)
         self._interpolation = OcvSocInterpolation()
-        self.connectInterpolationSignals(self._interpolation)
-
+        self.connectDataSignals(self._interpolation)
+    
     # Title of this model class
 
     @Property(str, notify=titleChanged)
@@ -83,7 +84,7 @@ class CellDataAnalyzerViewModel(QObject):
             self._runner.entryFaultedReading.connect(vm.onRunnerFaultedReading)
             vm.startReading.connect(self._runner.startFileRunner)
 
-    def connectInterpolationSignals(self, vm: OcvSocInterpolation):
+    def connectDataSignals(self, vm: OcvSocInterpolation):
         if self._cellDataList and vm:
             self._cellDataList.dataChangedSignal.connect(vm.onDataChanged)
 

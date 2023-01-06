@@ -25,7 +25,10 @@ if __name__ == "__main__":
     gResize = gRed.reshape((int(gRed.shape[0] / 2), 4))
     gCalc = np.apply_along_axis(my_func, 1, gResize)
     print(gCalc) """
-    select = np.array([0, 33, 66, 100], np.int64)
+    select = np.array([[0, 33, 66, 100],[1,34,67,101]], np.int64)
+    print(select)
+    print(select[:, [2,3]])
+    print(np.unique(select[:, [2,3]]))
     eleCounts = select[1:select.shape[0]] - select[0:select.shape[0] - 1]
     #print(eleCounts)
     a = np.array([[0, 1, 7, 3, 4],[5, 6, 2, 8, 9]], np.float32)
