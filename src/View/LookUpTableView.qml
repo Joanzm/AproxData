@@ -3,17 +3,25 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import OcvSocInterpolation 1.0
 
-Rectangle {
+Item {
     property OcvSocInterpolation viewModel: null
-    color: "white"
 
-    TextArea {
-        id: lookUpTextField
+    Rectangle {
+        anchors.fill: parent
+        color: "black"
 
-        Connections {
-            target: viewModel
-            function onSelectedRowChanged(value) {
-                lookUpTextField.text = viewModel.lookUpTable
+        ScrollView {
+            anchors.fill: parent
+            anchors.margins: 2
+
+            TextArea {
+                id: lookUpTextField            
+                Connections {
+                    target: viewModel
+                    function onSelectedRowChanged(value) {
+                        lookUpTextField.text = viewModel.lookUpTable
+                    }
+                }
             }
         }
     }

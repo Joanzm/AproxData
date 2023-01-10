@@ -117,6 +117,7 @@ ApplicationWindow {
 
                     LookUpTableView {
                         viewModel: mainmodel.interpolation
+                        Layout.margins: 10
                         Layout.minimumWidth: 100; Layout.minimumHeight: 100
                         Layout.preferredWidth: 50; Layout.preferredHeight: 50
                         Layout.fillWidth: true; Layout.fillHeight: true

@@ -8,30 +8,33 @@ RowLayout {
     id: interpolationView
     
     ColumnLayout {
-        anchors.topMargin: 100
-        anchors.leftMargin: 100
-        Layout.preferredHeight: 50
-        Layout.preferredWidth: 50
+        id: inputLayout
+        property int maxWidth: 350
+        Layout.maximumWidth: maxWidth
         spacing: 5
 
         Text {
+            Layout.maximumWidth: inputLayout.maxWidth
             text: "Interpolation: Here you can analyze the loaded data and create look up tables for algorithm implementation :)"
+            wrapMode: Text.Wrap
         }
 
         Text {
+            Layout.maximumWidth: inputLayout.maxWidth
             text: "Lower:"
         }
 
         TextField {
-
+            Layout.maximumWidth: inputLayout.maxWidth
         }
 
         Text {
+            Layout.maximumWidth: inputLayout.maxWidth
             text: "Higher:"
         }
 
         TextField {
-
+            Layout.maximumWidth: inputLayout.maxWidth
         }
 
         Button {
