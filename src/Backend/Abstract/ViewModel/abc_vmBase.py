@@ -40,7 +40,7 @@ class AbcVmBaseViewAll(AbcVmBaseChanges):
     def onViewAllChanging(self):
         pass
     
-class AbcVmGraph:
+class AbcVmGraph(AbcVmBaseChanges, QObject):
     
     @abstractmethod
     def _addData(self, data: object):
@@ -107,7 +107,6 @@ class AbcVmTable(QAbstractTableModel):
     def __init__(self) -> None:
         super().__init__()
         self._isHeaderVisible = True
-        self._headers = []
         self._data = []
 
     # PUBLIC METHODS
@@ -129,9 +128,9 @@ class AbcVmTable(QAbstractTableModel):
     def addEntries(self, obj: object):
         pass
 
-    @Slot(int, result="QVariant")
+    @abstractmethod
     def getColumnHeaderData(self, section: int):
-        return self._headers[section]
+        pass
 
     def rowCount(self, parent=QModelIndex()):
        return len(self._data)

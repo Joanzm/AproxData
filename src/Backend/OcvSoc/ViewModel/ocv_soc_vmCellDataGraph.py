@@ -3,7 +3,7 @@ from PySide6.QtCore import Signal
 from Backend.Abstract.Model.abc_data import AbcData
 from Backend.Abstract.ViewModel.abc_vmBase import AbcVmGraphViewAll
 
-class OcvSocCellDataGraph(AbcVmGraphViewAll[AbcData]):
+class OcvSocCellDataGraph(AbcVmGraphViewAll):
 
     seriesAdded = Signal(AbcData)
     seriesRemoved = Signal(AbcData)

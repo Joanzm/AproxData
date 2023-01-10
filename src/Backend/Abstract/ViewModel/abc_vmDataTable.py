@@ -43,6 +43,10 @@ class AbcDataTable(AbcVmBaseViewAll, AbcVmTable):
             self._data.append(obj.data[i])
         self.endInsertRows()
         self.dataChanged.emit(self._data)
+
+    @Slot(int, result="QVariant")
+    def getColumnHeaderData(self, section: int):
+        return self._headers[section]
     
     # PRIVATE/PROTECTED METHODS
     # Manipulate data

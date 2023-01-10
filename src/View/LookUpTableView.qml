@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import OcvSocInterpolation 1.0
+import AbcVmInterpolation 1.0
 
 Item {
-    property OcvSocInterpolation viewModel: null
+    property AbcVmInterpolation viewModel: null
 
     Rectangle {
         anchors.fill: parent
@@ -15,7 +15,8 @@ Item {
             anchors.margins: 2
 
             TextArea {
-                id: lookUpTextField            
+                id: lookUpTextField   
+                readOnly: true         
                 Connections {
                     target: viewModel
                     function onSelectedRowChanged(value) {
