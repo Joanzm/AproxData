@@ -98,19 +98,29 @@ ApplicationWindow {
                 
                 GridLayout {
                     anchors.fill: parent
+                    rows: 2; columns: 2
+                    rowSpacing: 2; columnSpacing: 2
 
                     InterpolationView {
                         viewModel: mainmodel.interpolation
-                        Layout.preferredHeight: 50
+                        Layout.minimumWidth: 100; Layout.minimumHeight: 100
+                        Layout.preferredWidth: 100; Layout.preferredHeight: 50
                         Layout.columnSpan: 2
-                    }
-
-                    LookUpTableView {
-                        Layout.preferredHeight: 50
+                        Layout.fillWidth: true; Layout.fillHeight: true
                     }
 
                     LookUpTableChartView {
-                        Layout.preferredHeight: 50
+                        Layout.minimumWidth: 100; Layout.minimumHeight: 100
+                        Layout.preferredWidth: 50; Layout.preferredHeight: 50
+                        Layout.fillWidth: true; Layout.fillHeight: true
+                    }
+
+                    LookUpTableView {
+                        viewModel: mainmodel.interpolation
+                        Layout.margins: 10
+                        Layout.minimumWidth: 100; Layout.minimumHeight: 100
+                        Layout.preferredWidth: 50; Layout.preferredHeight: 50
+                        Layout.fillWidth: true; Layout.fillHeight: true
                     }
                 }
             }

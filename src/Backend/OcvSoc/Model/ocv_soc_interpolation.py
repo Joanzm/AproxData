@@ -32,6 +32,14 @@ class OcvSoc2DLinearInterpolation:
     def getMaxDeviation(self, data: np.ndarray) -> float:
         return np.float32(np.max(np.absolute(data[:, 1] - data[:, -1]), axis=0)).item()
 
+    def getLookUpTable(self, size: int, data: np.ndarray) -> ndarray:
+        select = self._getSelectMask(data.shape[0] - 1, size)
+        select = select[:-1] #remove last element
+        return np.take(data, select, axis=0)[:, [0,2,3]]
+
+    def str_getLookUpTable(self, size: int, data: np.ndarray) -> str:
+        return self.getLookUpTable(size, data).__str__()
+        
     def _createNumpyArray(self, dataObjects: List[OcvSocCellData]) -> np.ndarray:
         """
         Insert all PySide model data from @dataObjects into a numpy array.
@@ -57,7 +65,7 @@ class OcvSoc2DLinearInterpolation:
         """
         # Calculate indices for equidistant sectors in 
         # the measure data to get the look up table for the given lookUpTableSize.
-        select = np.round(np.linspace(0, arrAverage.shape[0] - 1, lookUpTableSize, dtype=np.int64), 0)
+        select = self._getSelectMask(arrAverage.shape[0] - 1, lookUpTableSize)
 
         # Calculate the element counts (size) for each select sector.
         counts = select[1:select.shape[0]] - select[0:select.shape[0] - 1]
@@ -90,5 +98,10 @@ class OcvSoc2DLinearInterpolation:
         """
         yValue = arr[2] * arr[0] + arr[3]
         return np.append(arr, yValue)
+
+    def _getSelectMask(self, maxValue: int, count: int) -> ndarray:
+        # Calculate indices for equidistant sectors in 
+        # the measure data to get the look up table for the given lookUpTableSize.
+        return np.round(np.linspace(0, maxValue, count, dtype=np.int64), 0)
             
 

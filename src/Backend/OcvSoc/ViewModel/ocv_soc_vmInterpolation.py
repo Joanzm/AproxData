@@ -9,6 +9,8 @@ from Backend.Abstract.ViewModel.abc_vmBase import AbcTable
 class OcvSocInterpolation(AbcTable):
 
     selectedRowChanged = Signal(int)
+    lookUpTableChanged = Signal(str)
+
     lowerLookUpTableSizeChanged = Signal(int)
     upperLookUpTableSizeChanged = Signal(int)
 
@@ -20,6 +22,7 @@ class OcvSocInterpolation(AbcTable):
         self._upperLookUpTableSize = 20
         self._currDataObjects = []
         self._headers = ['Size', 'Avg Deviation', 'Max Deviation']
+        self._lookUpTable = ""
 
     # PUBLIC METHODS
     # Setting properties
@@ -31,6 +34,10 @@ class OcvSocInterpolation(AbcTable):
     @selectedRow.setter
     def selectedRow(self, value: int):
         self._selectedRow = value
+        if (value != -1):
+            self.lookUpTable = self._interpolation.str_getLookUpTable(self._data[value][0], self._data[value][1])
+        else:
+            self.lookUpTable = ""
         self.selectedRowChanged.emit(value)
 
     @Property(int, notify=lowerLookUpTableSizeChanged)
@@ -50,6 +57,15 @@ class OcvSocInterpolation(AbcTable):
     def upperLookUpTableSize(self, value: int):
         self._upperLookUpTableSize = value
         self.upperLookUpTableSizeChanged.emit(value)
+
+    @Property(str, notify=lookUpTableChanged)
+    def lookUpTable(self) -> str:
+        return self._lookUpTable
+    
+    @lookUpTable.setter
+    def lookUpTable(self, value: str):
+        self._lookUpTable = value
+        self.lookUpTableChanged.emit(value)
 
     @Slot()
     def interpolate(self):
