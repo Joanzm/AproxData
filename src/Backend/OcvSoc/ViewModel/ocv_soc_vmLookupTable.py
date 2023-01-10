@@ -4,7 +4,7 @@ from typing import List, Union
 
 from Backend.OcvSoc.Model.ocv_soc_interpolation import OcvSoc2DLinearInterpolation
 from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
-from Backend.Abstract.ViewModel.abc_vmBase import AbcTable
+from Backend.Abstract.ViewModel.abc_vmBase import AbcVmTable
 
 class OcvSocLookUpTable(QObject):
 

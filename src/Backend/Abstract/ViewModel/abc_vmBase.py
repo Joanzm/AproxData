@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt, QObject, QAbstractTableModel, QModelIndex, QModelIndex, QPersistentModelIndex, Slot, Property, Signal
-from abc import abstractmethod
+from abc import abstractmethod, ABCMeta
 from typing import Union
 
 class AbcVmBaseChanges():
@@ -39,9 +39,18 @@ class AbcVmBaseViewAll(AbcVmBaseChanges):
     @abstractmethod
     def onViewAllChanging(self):
         pass
+    
+class AbcVmGraph:
+    
+    @abstractmethod
+    def _addData(self, data: object):
+        pass
 
-class AbcGraph(AbcVmBaseViewAll, QObject):
+    @abstractmethod
+    def _removeData(self, data: object):
+        pass
 
+class AbcVmGraphViewAll(AbcVmGraph, AbcVmBaseViewAll, QObject):
     # Signals for connection in qml GraphView
     seriesCleared = Signal()
 
@@ -74,23 +83,23 @@ class AbcGraph(AbcVmBaseViewAll, QObject):
     def __updateAll(self, dataObjects: object):
         self.seriesCleared.emit()
         for i in range(len(dataObjects)):
-            self._addSeries(dataObjects[i])
+            self._addData(dataObjects[i])
 
     def __updateSelected(self, dataObjects: object, selectedIndex: int,):
         if (selectedIndex >= 0 and selectedIndex < len(dataObjects)):
             if (dataObjects[selectedIndex] is not None):
                 self.seriesCleared.emit()
-                self._addSeries(dataObjects[selectedIndex])
+                self._addData(dataObjects[selectedIndex])
 
     @abstractmethod
-    def _addSeries(self, data: object):
+    def _addData(self, data: object):
         pass
 
     @abstractmethod
-    def _removeSeries(self, data: object):
+    def _removeData(self, data: object):
         pass
 
-class AbcTable(QAbstractTableModel):
+class AbcVmTable(QAbstractTableModel):
 
     dataChanged = Signal('QVariantList')
     headerDataChanged = Signal(Qt.Orientation, int, int)
