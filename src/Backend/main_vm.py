@@ -4,8 +4,9 @@ from PySide6.QtCore import Property, Signal, QObject
 from .Abstract.ViewModel.abc_vmBase import AbcVmBaseChanges
 from .OcvSoc.ViewModel.ocv_soc_vmDataList import OcvSocDataListViewModel
 
-from .OcvSoc.ViewModel.ocv_soc_vmInterpolation import OcvSocInterpolation
-from .OcvSoc.ViewModel.ocv_soc_vmLookupTable import OcvSocLookUpTable
+from .Abstract.ViewModel.abc_vmInterpolation import AbcVmInterpolation
+
+from .OcvSoc.ViewModel.ocv_soc_vmInterpolation import Vm2DLinearInterpolation
 from .OcvSoc.ViewModel.ocv_soc_vmCellDataTable import OcvSocCellDataTable
 from .OcvSoc.ViewModel.ocv_soc_vmCellDataGraph import OcvSocCellDataGraph
 from .OcvSoc.Model.ocv_soc_fileRunnable import OcvSocFileRunner
@@ -30,7 +31,7 @@ class CellDataAnalyzerViewModel(QObject):
         self.connectVmBaseSignals(self._cellDataTable)
         self._cellDataGraph = OcvSocCellDataGraph()
         self.connectVmBaseSignals(self._cellDataGraph)
-        self._interpolation = OcvSocInterpolation()
+        self._interpolation = Vm2DLinearInterpolation()
         self.connectDataSignals(self._interpolation)
     
     # Title of this model class
@@ -84,7 +85,7 @@ class CellDataAnalyzerViewModel(QObject):
             self._runner.entryFaultedReading.connect(vm.onRunnerFaultedReading)
             vm.startReading.connect(self._runner.startFileRunner)
 
-    def connectDataSignals(self, vm: OcvSocInterpolation):
+    def connectDataSignals(self, vm: AbcVmInterpolation):
         if self._cellDataList and vm:
             self._cellDataList.dataChangedSignal.connect(vm.onDataChanged)
 

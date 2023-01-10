@@ -2,10 +2,10 @@ from PySide6.QtCore import Qt, QObject, Signal, QModelIndex, QPersistentModelInd
 from abc import abstractmethod
 from typing import List, Union
 
-from .abc_vmBase import AbcTable, AbcVmBaseViewAll
+from .abc_vmBase import AbcVmTable, AbcVmBaseViewAll
 from ..Model.abc_data import AbcData
 
-class AbcDataTable(AbcVmBaseViewAll, AbcTable):
+class AbcDataTable(AbcVmBaseViewAll, AbcVmTable):
 
     def __init__(self) -> None:
         super().__init__()
@@ -43,6 +43,10 @@ class AbcDataTable(AbcVmBaseViewAll, AbcTable):
             self._data.append(obj.data[i])
         self.endInsertRows()
         self.dataChanged.emit(self._data)
+
+    @Slot(int, result="QVariant")
+    def getColumnHeaderData(self, section: int):
+        return self._headers[section]
     
     # PRIVATE/PROTECTED METHODS
     # Manipulate data

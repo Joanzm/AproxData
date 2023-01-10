@@ -3,76 +3,80 @@ import QtQuick.Controls
 import QtCharts
 import OcvSocCellDataGraph 1.0
 
-Rectangle {
+Item {
     property OcvSocCellDataGraph viewModel: null
 
-    ChartView {
-        id: cellDataChartView
-        x: 0
-        y: 0
-        width: parent.width
-        height: parent.height
-        antialiasing: true
+    Rectangle {
+        anchors.fill: parent
+        color: "#DFDFDF"
 
-        ValueAxis {
-            id: axisX
-            min: 2.5
-            max: 4.5
-        }
+        ChartView {
+            id: cellDataChartView
+            anchors.fill: parent
+            anchors.margins: 0
+            antialiasing: true
 
-        ValueAxis {
-            id: axisY
-            min: -0.1
-            max: 1.1
-        }
+            ValueAxis {
+                id: axisX
+                min: 2.5
+                max: 4.5
+            }
 
-        Connections {
-            target: viewModel
-            function onSeriesAdded(value) { 
+            ValueAxis {
+                id: axisY
+                min: -0.1
+                max: 1.1
+            }
 
-                var series = cellDataChartView.createSeries(ChartView.SeriesTypeSpline, value.fileInfo.filePath, axisX, axisY);
+            Connections {
+                target: viewModel
+                function onSeriesAdded(value) { 
 
-                value.data.forEach(entry => {
-                    var p = entry.point
-                    series.append(p.x, p.y);
-                });
+                    var series = cellDataChartView.createSeries(ChartView.SeriesTypeSpline, value.fileInfo.filePath, axisX, axisY);
 
-                //Calculate graph min and max value for axis
-                var xMin = Number.POSITIVE_INFINITY;
-                var yMin = Number.POSITIVE_INFINITY;
-                var xMax = Number.NEGATIVE_INFINITY;
-                var yMax = Number.NEGATIVE_INFINITY;
-                for (var i=0;i<cellDataChartView.count;i++){
-                    series = cellDataChartView.series(i);
+                    value.data.forEach(entry => {
+                        var p = entry.point
+                        series.append(p.x, p.y);
+                    });
 
-                    var minPoint = series.at(0);
-                    if (minPoint.x < xMin){
-                        xMin = minPoint.x;
+                    //Calculate graph min and max value for axis
+                    var xMin = Number.POSITIVE_INFINITY;
+                    var yMin = Number.POSITIVE_INFINITY;
+                    var xMax = Number.NEGATIVE_INFINITY;
+                    var yMax = Number.NEGATIVE_INFINITY;
+                    for (var i=0;i<cellDataChartView.count;i++){
+                        series = cellDataChartView.series(i);
+
+                        var minPoint = series.at(0);
+                        if (minPoint.x < xMin){
+                            xMin = minPoint.x;
+                        }
+                        if (minPoint.y < yMin){
+                            yMin = minPoint.y;
+                        }
+
+                        var maxPoint = series.at(series.count - 1);
+                        if (maxPoint.x > xMax){
+                            xMax = maxPoint.x;
+                        }
+                        if (maxPoint.y > yMax){
+                            yMax = maxPoint.y;
+                        }
                     }
-                    if (minPoint.y < yMin){
-                        yMin = minPoint.y;
-                    }
 
-                    var maxPoint = series.at(series.count - 1);
-                    if (maxPoint.x > xMax){
-                        xMax = maxPoint.x;
-                    }
-                    if (maxPoint.y > yMax){
-                        yMax = maxPoint.y;
-                    }
+                    // Calulate extra space for graph between graph and axis
+                    var graphXSpacing = (xMax - xMin) / 20;
+                    var graphYSpacing = (yMax - yMin) / 20;
+                    axisX.min = xMin - graphXSpacing;
+                    axisY.min = yMin - graphYSpacing;
+                    axisX.max = xMax + graphXSpacing;
+                    axisY.max = yMax + graphYSpacing;
                 }
-
-                // Calulate extra space for graph between graph and axis
-                var graphXSpacing = (xMax - xMin) / 20;
-                var graphYSpacing = (yMax - yMin) / 20;
-                axisX.min = xMin - graphXSpacing;
-                axisY.min = yMin - graphYSpacing;
-                axisX.max = xMax + graphXSpacing;
-                axisY.max = yMax + graphYSpacing;
-            }
-            function onSeriesCleared() {
-                cellDataChartView.removeAllSeries();
+                function onSeriesCleared() {
+                    cellDataChartView.removeAllSeries();
+                }
             }
         }
+
     }
 }

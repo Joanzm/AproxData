@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import OcvSocInterpolation 1.0
+import AbcVmInterpolation 1.0
 
 RowLayout {
-    property OcvSocInterpolation viewModel: null
+    property AbcVmInterpolation viewModel: null
     id: interpolationView
     
     ColumnLayout {

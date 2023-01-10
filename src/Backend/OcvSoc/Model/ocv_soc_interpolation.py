@@ -1,13 +1,16 @@
 import numpy as np
-from numpy import ndarray, dtype, float32
 from typing import List
-
+from Backend.Abstract.Model.abc_interpolation import IInterpolation
 from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
 
-class OcvSoc2DLinearInterpolation:
+class OcvSoc2DLinearInterpolation(IInterpolation):
 
     def __init__(self) -> None:
         super().__init__()
+        self._headers = ['Size', 'Avg Deviation', 'Max Deviation']
+
+    def headers(self) -> List:
+        return self._headers
 
     def calculate(self, 
         dataObjects: List[OcvSocCellData], 
@@ -32,13 +35,26 @@ class OcvSoc2DLinearInterpolation:
     def getMaxDeviation(self, data: np.ndarray) -> float:
         return np.float32(np.max(np.absolute(data[:, 1] - data[:, -1]), axis=0)).item()
 
-    def getLookUpTable(self, size: int, data: np.ndarray) -> ndarray:
+    def getAverageData(self, data: np.ndarray) -> np.ndarray:
+        return data[:, [0,1]]
+
+    def list_getAverageData(self, data: np.ndarray) -> List:
+        return self.getAverageData(data).tolist()
+
+    def getLookUpTable(self, size: int, data: np.ndarray) -> np.ndarray:
         select = self._getSelectMask(data.shape[0] - 1, size)
         select = select[:-1] #remove last element
         return np.take(data, select, axis=0)[:, [0,2,3]]
 
     def str_getLookUpTable(self, size: int, data: np.ndarray) -> str:
         return self.getLookUpTable(size, data).__str__()
+
+    def getInterpolationPoints(self, size: int, data: np.ndarray) -> np.ndarray:
+        select = self._getSelectMask(data.shape[0] - 1, size)
+        return np.take(data, select, axis=0)[:, [0,1]]
+
+    def list_getInterpolationPoints(self, size: int, data: np.ndarray) -> List:
+        return self.getInterpolationPoints(size, data).tolist()
         
     def _createNumpyArray(self, dataObjects: List[OcvSocCellData]) -> np.ndarray:
         """
@@ -56,7 +72,7 @@ class OcvSoc2DLinearInterpolation:
                 arr[2 * i * lenData + j + lenData] = dataObjects[j].data[i].soc
         return arr.reshape((lenEntries, 2, lenData))
 
-    def _getInterpolationValues(self, arrAverage: ndarray, lookUpTableSize: int) -> ndarray:
+    def _getInterpolationValues(self, arrAverage: np.ndarray, lookUpTableSize: int) -> np.ndarray:
         """
         Calcualtes the linear interpolation (factor and offset values) for a given @lookUpTableSize
         @arrAverage: The average measure data.
@@ -82,7 +98,7 @@ class OcvSoc2DLinearInterpolation:
         arrItpValues = np.repeat(arrItpValues, counts, axis=0)
         return arrItpValues
 
-    def _calculateInterpolationValues(self, arr: ndarray) -> List:
+    def _calculateInterpolationValues(self, arr: np.ndarray) -> List:
         """
         Calculate factor and offset from a two points in the
         measure dat.
@@ -91,7 +107,7 @@ class OcvSoc2DLinearInterpolation:
         offset = arr[1] - factor * arr[0]
         return np.array([factor, offset], dtype=np.float32)
 
-    def _calculateYValue(self, arr: ndarray) -> List:
+    def _calculateYValue(self, arr: np.ndarray) -> List:
         """
         Calculates the y-Value for a given row containing
         measure data and interpolation values
@@ -99,7 +115,7 @@ class OcvSoc2DLinearInterpolation:
         yValue = arr[2] * arr[0] + arr[3]
         return np.append(arr, yValue)
 
-    def _getSelectMask(self, maxValue: int, count: int) -> ndarray:
+    def _getSelectMask(self, maxValue: int, count: int) -> np.ndarray:
         # Calculate indices for equidistant sectors in 
         # the measure data to get the look up table for the given lookUpTableSize.
         return np.round(np.linspace(0, maxValue, count, dtype=np.int64), 0)
