@@ -32,7 +32,7 @@ class CellDataAnalyzerViewModel(QObject):
         self._cellDataGraph = OcvSocCellDataGraph()
         self.connectVmBaseSignals(self._cellDataGraph)
         self._interpolation = Vm2DInterpolation()
-        self.connectDataSignals(self._interpolation)
+        self.connectVmBaseSignals(self._interpolation)
     
     # Title of this model class
 
@@ -84,9 +84,5 @@ class CellDataAnalyzerViewModel(QObject):
             self._runner.entryFinishedReading.connect(vm.onRunnerFinishedFile)
             self._runner.entryFaultedReading.connect(vm.onRunnerFaultedReading)
             vm.startReading.connect(self._runner.startFileRunner)
-
-    def connectDataSignals(self, vm: AbcVmInterpolation):
-        if self._cellDataList and vm:
-            self._cellDataList.dataChangedSignal.connect(vm.onDataChanged)
 
     

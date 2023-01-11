@@ -19,7 +19,7 @@ def _createNumpyDataMatrix(dataObjects: List[OcvSocCellData]) -> np.ndarray:
             arr[2 * i * lenData + j + lenData] = dataObjects[j].data[i].soc
     return arr.reshape((lenEntries, 2, lenData))
 
-class OcvSoc2DLinearInterpolation(IInterpolation):
+class LinearInterpolation(IInterpolation):
 
     def __init__(self) -> None:
         super().__init__()
@@ -138,27 +138,12 @@ class OcvSoc2DLinearInterpolation(IInterpolation):
         offset = arr[1] - factor * arr[0]
         return np.array([arr[0], factor, offset], dtype=np.float32)
 
-    def _calculateData(self, arr: np.ndarray, amountOfPoints: int = 0) -> List:
-        """
-        Calculates the y-Value for a given row containing
-        measure data and interpolation values
-        """
-        xValue = arr[0]
-        luv = self._interopValues[amountOfPoints]
-        luv = luv[luv[:,0] <= xValue]
-        if len(luv) > 0:
-            fo = luv[-1]
-        else:
-            fo = self._interopValues[amountOfPoints][0]
-        yValue = fo[1] * xValue + fo[2]
-        return np.array([arr[0], yValue], dtype=np.float32)
-
     def _getSelectMask(self, maxValue: int, count: int) -> np.ndarray:
         # Calculate indices for equidistant sectors in 
         # the measure data to get the look up table for the given lookUpTableSize.
         return np.round(np.linspace(0, maxValue, count, dtype=np.int64), 0)
 
-class TwoDimPolynomialInterpolation(IInterpolation):
+class PolyfitInterpolation(IInterpolation):
 
     def __init__(self) -> None:
         super().__init__()

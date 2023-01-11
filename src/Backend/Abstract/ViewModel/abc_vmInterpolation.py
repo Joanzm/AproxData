@@ -4,9 +4,9 @@ from typing import List, Union
 
 from Backend.Abstract.Model.abc_data import AbcData
 from Backend.Abstract.Model.abc_interpolation import IInterpolation
-from Backend.Abstract.ViewModel.abc_vmBase import AbcVmTable
+from Backend.Abstract.ViewModel.abc_vmBase import AbcVmBaseChanges, AbcVmTable
 
-class AbcVmInterpolation(AbcVmTable):
+class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
 
     selectedRowChanged = Signal(int)
     lookUpTableChanged = Signal(str)
@@ -34,13 +34,14 @@ class AbcVmInterpolation(AbcVmTable):
     @selectedRow.setter
     def selectedRow(self, value: int):
         self._selectedRow = value
-        if (value != -1):
-            self.lookUpTable = self._interpolation.str_getAlgorithmResultData(self._data[value])
-        else:
+        if (value < 0):
             self.lookUpTable = ""
-        self.graphChanged.emit(value, 
-            self._interpolation.list_getAverageData(), 
-            self._interpolation.list_getInterpolationPoints(self._data[value]))
+            self.graphChanged.emit(value, None, None)
+        else:
+            self.lookUpTable = self._interpolation.str_getAlgorithmResultData(self._data[value])
+            self.graphChanged.emit(value, 
+                self._interpolation.list_getAverageData(), 
+                self._interpolation.list_getInterpolationPoints(self._data[value]))
         self.selectedRowChanged.emit(value)
 
     @Property(int, notify=lowerLookUpTableSizeChanged)
@@ -69,6 +70,10 @@ class AbcVmInterpolation(AbcVmTable):
     def lookUpTable(self, value: str):
         self._lookUpTable = value
         self.lookUpTableChanged.emit(value)
+        
+    @abstractmethod
+    def changeAlgorithm(self, value: str):
+        pass
 
     @Slot()
     def interpolate(self):
@@ -77,13 +82,22 @@ class AbcVmInterpolation(AbcVmTable):
             self._upperLookUpTableSize)
         self.__update(itp)
 
-    # Update View
-    # QAbstractTableModel implementation
-
     @Slot()
     def onDataChanged(self, dataObjects: List[AbcData], selectedIndex: int):
         self._currDataObjects = dataObjects
 
+    @Slot()
+    def onSelectionChanged(self, dataObjects: object, selectedIndex: int):
+        pass
+
+    @Slot()
+    def onClearView(self):
+        self.clearEntries()
+        self.selectedRow = -1
+
+    # Update View
+    # QAbstractTableModel implementation
+    
     displayRole = Qt.UserRole + 1
 
     def roleNames(self):

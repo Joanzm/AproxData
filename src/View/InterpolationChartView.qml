@@ -35,7 +35,7 @@ Item {
                 function onGraphChanged(row, averageData, interpolationPoints) {
 
                     interpolationChartView.removeAllSeries();
-                    if (row == -1)
+                    if (row < 0)
                         return;
 
                     var series = interpolationChartView.createSeries(ChartView.SeriesTypeSpline, "Average Data", axisX, axisY);

@@ -19,6 +19,20 @@ RowLayout {
             wrapMode: Text.Wrap
         }
 
+        ComboBox {
+            Layout.maximumWidth: inputLayout.maxWidth
+            Layout.preferredWidth: 180
+            id: cbAlgorithm
+            model: ListModel {
+                id: model
+                ListElement { text: "Linear Interpolation" }
+                ListElement { text: "Polyfit Interpolation" }
+            }
+            onActivated: {
+                viewModel.changeAlgorithm(cbAlgorithm.currentValue)
+            }
+        }
+
         Text {
             Layout.maximumWidth: inputLayout.maxWidth
             text: "Lower:"
@@ -26,6 +40,7 @@ RowLayout {
 
         TextField {
             Layout.maximumWidth: inputLayout.maxWidth
+            Layout.preferredWidth: 180
         }
 
         Text {
@@ -35,6 +50,7 @@ RowLayout {
 
         TextField {
             Layout.maximumWidth: inputLayout.maxWidth
+            Layout.preferredWidth: 180
         }
 
         Button {
