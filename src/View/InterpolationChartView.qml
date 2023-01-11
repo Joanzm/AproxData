@@ -43,6 +43,12 @@ Item {
                         series.append(averageData[i][0], averageData[i][1]);
                     }
 
+                    var interpolationSeries = interpolationChartView.createSeries(ChartView.SeriesTypeLine, 'Interpolation', axisX, axisY);
+                    interpolationSeries.color = "red";
+                    for (var i=0;i<interpolationPoints.length;i++) {
+                        interpolationSeries.append(interpolationPoints[i][0], interpolationPoints[i][1]);
+                    }
+
                     //Calculate graph min and max value for axis
                     var xMin = Number.POSITIVE_INFINITY;
                     var yMin = Number.POSITIVE_INFINITY;
@@ -75,12 +81,6 @@ Item {
                     axisY.min = yMin - graphYSpacing;
                     axisX.max = xMax + graphXSpacing;
                     axisY.max = yMax + graphYSpacing;
-
-                    var interpolationSeries = interpolationChartView.createSeries(ChartView.SeriesTypeLine, 'Interpolation', axisX, axisY);
-                    interpolationSeries.color = "red";
-                    for (var i=0;i<interpolationPoints.length;i++) {
-                        interpolationSeries.append(interpolationPoints[i][0], interpolationPoints[i][1]);
-                    }
                 }
             }
         }

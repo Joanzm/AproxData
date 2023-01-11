@@ -6,7 +6,7 @@ from .OcvSoc.ViewModel.ocv_soc_vmDataList import OcvSocDataListViewModel
 
 from .Abstract.ViewModel.abc_vmInterpolation import AbcVmInterpolation
 
-from .OcvSoc.ViewModel.ocv_soc_vmInterpolation import Vm2DLinearInterpolation
+from .OcvSoc.ViewModel.ocv_soc_vmInterpolation import Vm2DInterpolation
 from .OcvSoc.ViewModel.ocv_soc_vmCellDataTable import OcvSocCellDataTable
 from .OcvSoc.ViewModel.ocv_soc_vmCellDataGraph import OcvSocCellDataGraph
 from .OcvSoc.Model.ocv_soc_fileRunnable import OcvSocFileRunner
@@ -31,7 +31,7 @@ class CellDataAnalyzerViewModel(QObject):
         self.connectVmBaseSignals(self._cellDataTable)
         self._cellDataGraph = OcvSocCellDataGraph()
         self.connectVmBaseSignals(self._cellDataGraph)
-        self._interpolation = Vm2DLinearInterpolation()
+        self._interpolation = Vm2DInterpolation()
         self.connectDataSignals(self._interpolation)
     
     # Title of this model class

@@ -35,12 +35,12 @@ class AbcVmInterpolation(AbcVmTable):
     def selectedRow(self, value: int):
         self._selectedRow = value
         if (value != -1):
-            self.lookUpTable = self._interpolation.str_getLookUpTable(self._data[value][0], self._data[value][1])
+            self.lookUpTable = self._interpolation.str_getAlgorithmResultData(self._data[value])
         else:
             self.lookUpTable = ""
         self.graphChanged.emit(value, 
-            self._interpolation.list_getAverageData(self._data[value][1]), 
-            self._interpolation.list_getInterpolationPoints(self._data[value][0], self._data[value][1]))
+            self._interpolation.list_getAverageData(), 
+            self._interpolation.list_getInterpolationPoints(self._data[value]))
         self.selectedRowChanged.emit(value)
 
     @Property(int, notify=lowerLookUpTableSizeChanged)
@@ -109,18 +109,18 @@ class AbcVmInterpolation(AbcVmTable):
         if index.isValid():
             if role == AbcVmInterpolation.displayRole:
                 if (index.column() == 0):
-                    return self._data[index.row()][0]
+                    return self._data[index.row()]
                 else:
                     val = None
                     prevVal = None
                     if (index.column() == 1):
-                        val = self._interpolation.getAverageDeviation(self._data[index.row()][1])
+                        val = self._interpolation.getAverageDeviation(self._data[index.row()])
                         if index.row() > 0:
-                            prevVal = self._interpolation.getAverageDeviation(self._data[index.row() - 1][1])
+                            prevVal = self._interpolation.getAverageDeviation(self._data[index.row() - 1])
                     elif (index.column() == 2):
-                        val = self._interpolation.getMaxDeviation(self._data[index.row()][1])
+                        val = self._interpolation.getMaxDeviation(self._data[index.row()])
                         if index.row() > 0:
-                            prevVal = self._interpolation.getMaxDeviation(self._data[index.row() - 1][1])
+                            prevVal = self._interpolation.getMaxDeviation(self._data[index.row() - 1])
                     
                     if val is not None:
                         if prevVal is not None:

@@ -20,10 +20,10 @@ class IInterpolation(metaclass=ABCMeta):
                 callable(subclass.getAverageData) or 
                 hasattr(subclass, 'list_getAverageData') and 
                 callable(subclass.list_getAverageData) or 
-                hasattr(subclass, 'getLookUpTable') and 
-                callable(subclass.getLookUpTable) or 
-                hasattr(subclass, 'str_getLookUpTable') and 
-                callable(subclass.str_getLookUpTable) or 
+                hasattr(subclass, 'getAlgorithmResultData') and 
+                callable(subclass.getAlgorithmResultData) or 
+                hasattr(subclass, 'str_getAlgorithmResultData') and 
+                callable(subclass.str_getAlgorithmResultData) or 
                 hasattr(subclass, 'getInterpolationPoints') and 
                 callable(subclass.getInterpolationPoints) or 
                 hasattr(subclass, 'list_getInterpolationPoints') and 
@@ -42,37 +42,37 @@ class IInterpolation(metaclass=ABCMeta):
             raise NotImplementedError
 
     @abstractmethod
-    def getAverageDeviation(self, data: ndarray) -> float:
+    def getAverageDeviation(self, id: int) -> float:
         raise NotImplementedError
 
     @abstractmethod
-    def getMinDeviation(self, data: ndarray) -> float:
+    def getMinDeviation(self, id: int) -> float:
         raise NotImplementedError
 
     @abstractmethod
-    def getMaxDeviation(self, data: ndarray) -> float:
+    def getMaxDeviation(self, id: int) -> float:
         raise NotImplementedError
 
     @abstractmethod
-    def getAverageData(self, data: ndarray) -> ndarray:
+    def getAverageData(self) -> ndarray:
         raise NotImplementedError
 
     @abstractmethod
-    def list_getAverageData(self, data: ndarray) -> List:
+    def list_getAverageData(self) -> List:
         raise NotImplementedError
 
     @abstractmethod
-    def getLookUpTable(self, size: int, data: ndarray) -> ndarray:
+    def getAlgorithmResultData(self, id: int) -> ndarray:
         raise NotImplementedError
 
     @abstractmethod
-    def str_getLookUpTable(self, size: int, data: ndarray) -> str:
+    def str_getAlgorithmResultData(self, id: int) -> str:
         raise NotImplementedError
 
     @abstractmethod
-    def getInterpolationPoints(self, size: int, data: ndarray) -> ndarray:
+    def getInterpolationPoints(self, id: int, xValues: List[int] = []) -> ndarray:
         raise NotImplementedError
 
     @abstractmethod
-    def list_getInterpolationPoints(self, size: int, data: ndarray) -> List:
+    def list_getInterpolationPoints(self, id: int, xValues: List[int] = []) -> List:
         raise NotImplementedError
