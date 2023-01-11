@@ -25,11 +25,23 @@ if __name__ == "__main__":
     gResize = gRed.reshape((int(gRed.shape[0] / 2), 4))
     gCalc = np.apply_along_axis(my_func, 1, gResize)
     print(gCalc) """
-    select = np.array([[0, 33, 66, 100],[1,34,67,101]], np.int64)
+
+    """select = np.array([[0, 33, 66, 100],[1,34,67,101]], np.int64)
     print(select)
     print(select[:, [2,3]])
     print(np.unique(select[:, [2,3]]))
     eleCounts = select[1:select.shape[0]] - select[0:select.shape[0] - 1]
     #print(eleCounts)
     a = np.array([[0, 1, 7, 3, 4],[5, 6, 2, 8, 9]], np.float32)
-    print(np.max(a[:, -1], axis=0))
+    print(np.max(a[:, -1], axis=0)) """
+
+    x = np.array([[[2.8168, 2.7963, 2.7666, 2.823 ], [0.00, 0.00, 0.00, 0.00]],
+                [[3.0028, 2.9916, 2.9644, 3.0078], [0.01, 0.01, 0.009, 0.01]],
+                [[3.1163, 3.1088, 3.0915, 3.1194], [0.02, 0.02, 0.019, 0.02]]])
+
+    a = 2.9
+    calcValues = np.array([[2.8, 0], [2.8, 0], [3.0, 0.01], [3.1, 0.02]])
+    print(calcValues[:,0] < 2.9)
+    
+
+

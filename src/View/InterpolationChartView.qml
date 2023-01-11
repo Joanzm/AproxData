@@ -35,12 +35,18 @@ Item {
                 function onGraphChanged(row, averageData, interpolationPoints) {
 
                     interpolationChartView.removeAllSeries();
-                    if (row == -1)
+                    if (row < 0)
                         return;
 
                     var series = interpolationChartView.createSeries(ChartView.SeriesTypeSpline, "Average Data", axisX, axisY);
                     for (var i=0;i<averageData.length;i++) {
                         series.append(averageData[i][0], averageData[i][1]);
+                    }
+
+                    var interpolationSeries = interpolationChartView.createSeries(ChartView.SeriesTypeLine, 'Interpolation', axisX, axisY);
+                    interpolationSeries.color = "red";
+                    for (var i=0;i<interpolationPoints.length;i++) {
+                        interpolationSeries.append(interpolationPoints[i][0], interpolationPoints[i][1]);
                     }
 
                     //Calculate graph min and max value for axis
@@ -75,12 +81,6 @@ Item {
                     axisY.min = yMin - graphYSpacing;
                     axisX.max = xMax + graphXSpacing;
                     axisY.max = yMax + graphYSpacing;
-
-                    var interpolationSeries = interpolationChartView.createSeries(ChartView.SeriesTypeLine, 'Interpolation', axisX, axisY);
-                    interpolationSeries.color = "red";
-                    for (var i=0;i<interpolationPoints.length;i++) {
-                        interpolationSeries.append(interpolationPoints[i][0], interpolationPoints[i][1]);
-                    }
                 }
             }
         }

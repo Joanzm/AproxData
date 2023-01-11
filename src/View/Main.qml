@@ -109,7 +109,7 @@ ApplicationWindow {
                         Layout.fillWidth: true; Layout.fillHeight: true
                     }
 
-                    LookUpTableChartView {
+                    InterpolationChartView {
                         viewModel: mainmodel.interpolation
                         Layout.margins: 10
                         Layout.minimumWidth: 100; Layout.minimumHeight: 100
@@ -117,7 +117,7 @@ ApplicationWindow {
                         Layout.fillWidth: true; Layout.fillHeight: true
                     }
 
-                    LookUpTableView {
+                    InterpolationResultView {
                         viewModel: mainmodel.interpolation
                         Layout.margins: 10
                         Layout.minimumWidth: 100; Layout.minimumHeight: 100
