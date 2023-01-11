@@ -48,8 +48,8 @@ class LinearInterpolation(IInterpolation):
         dataObjects: List[OcvSocCellData], 
         lowerLookUpTableLimit: int, 
         upperLookUpTableLimit: int) -> List:
-            if (len(dataObjects[0].data) - 1 < upperLookUpTableLimit):
-                raise Exception("The upper value is bigger than the amount of data x-values. Upper value must be lower than {max}.".format(max = len(dataObjects[0].data)))
+            if (len(dataObjects[0].data) < upperLookUpTableLimit):
+                raise Exception("The upper value is bigger than the amount of data x-values. Upper value must be lower than {max}.".format(max = len(dataObjects[0].data)) + 1)
 
             results = []
             self._dataMatrix = _createNumpyDataMatrix(dataObjects)
