@@ -39,18 +39,24 @@ RowLayout {
         }
 
         TextField {
+            id: tfLower
             Layout.maximumWidth: inputLayout.maxWidth
             Layout.preferredWidth: 180
+            text: viewModel.lowerInteropSize
+            inputMask: "d99;\0"
         }
 
         Text {
             Layout.maximumWidth: inputLayout.maxWidth
-            text: "Higher:"
+            text: "Upper:"
         }
 
         TextField {
+            id: tfUpper
             Layout.maximumWidth: inputLayout.maxWidth
             Layout.preferredWidth: 180
+            text: viewModel.upperInteropSize
+            inputMask: "d99;\0"
         }
 
         Button {
@@ -58,7 +64,44 @@ RowLayout {
             text: "Start"
             enabled: true
             onClicked: {
-                viewModel.interpolate()
+                try {
+                    if (tfLower.text == "")
+                        throw new Error("Lower bound is empty.");
+                    if (tfUpper.text == "")
+                        throw new Error("Higher bound is empty.");
+                    
+                    var lower = Number(tfLower.text);
+                    var upper = Number(tfUpper.text);
+                    if (lower > upper)
+                        throw new Error("Lower value must not be higher than the upper value.");
+                    if (lower < viewModel.minInteropSize)
+                        throw new Error("Lower value too small. Minimum is: " + viewModel.minInteropSize);
+                    if (upper > viewModel.maxInteropSize)
+                        throw new Error("Upper value too big. Maximum is: " + viewModel.maxInteropSize);
+
+                    viewModel.lowerInteropSize = Number(tfLower.text);
+                    viewModel.upperInteropSize = Number(tfUpper.text);
+                    viewModel.interpolate();
+                }
+                catch(e) {
+                    errorDialog.text = e.message;
+                    errorDialog.visible = true;
+                }
+            }
+            Dialog {
+                id: errorDialog
+                property string text: ""
+                title: qsTr("Error")
+                modal: true
+                standardButtons: Dialog.Ok
+
+                Text {
+                    text: errorDialog.text
+                }
+                onAccepted: {
+                    tfLower.text = viewModel.lowerInteropSize
+                    tfUpper.text = viewModel.upperInteropSize
+                }
             }
         }
     }
@@ -97,17 +140,6 @@ RowLayout {
                 }
             }
         }
-
-        /*MouseArea {
-            id: _tableArea
-            z: 100
-            anchors.fill: parent
-            hoverEnabled: true
-            onExited: {
-                console.log(table.currentRow)
-                table.hoveredRow = -1
-            }
-        }*/
 
         delegate: Rectangle {
             z: 1
