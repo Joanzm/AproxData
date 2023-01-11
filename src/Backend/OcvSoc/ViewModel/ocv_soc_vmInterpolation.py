@@ -15,3 +15,8 @@ class Vm2DInterpolation(AbcVmInterpolation):
             self._interpolation = LinearInterpolation()
         if value == "Polyfit Interpolation":
             self._interpolation = PolyfitInterpolation()
+        
+        if (self._lowerInteropSize < self._interpolation.minInteropSize()):
+            self._lowerInteropSize = self._interpolation.minInteropSize()
+        if (self._upperInteropSize > self._interpolation.maxInteropSize()):
+            self._upperInteropSize = self._interpolation.maxInteropSize()

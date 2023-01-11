@@ -12,15 +12,15 @@ class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
     lookUpTableChanged = Signal(str)
     graphChanged = Signal(int, 'QVariantList', 'QVariantList')
 
-    lowerLookUpTableSizeChanged = Signal(int)
-    upperLookUpTableSizeChanged = Signal(int)
+    lowerInteropSizeChanged = Signal(int)
+    upperInteropSizeChanged = Signal(int)
 
     def __init__(self, interpolation : IInterpolation) -> None:
         super().__init__()
         self._interpolation = interpolation
         self._selectedRow = 0
-        self._lowerLookUpTableSize = 2
-        self._upperLookUpTableSize = 20
+        self._lowerInteropSize = self._interpolation.defaultLowerInteropSize()
+        self._upperInteropSize = self._interpolation.defaultUpperInteropSize()
         self._currDataObjects = []
         self._lookUpTable = ""
 
@@ -44,23 +44,31 @@ class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
                 self._interpolation.list_getInterpolationPoints(self._data[value]))
         self.selectedRowChanged.emit(value)
 
-    @Property(int, notify=lowerLookUpTableSizeChanged)
-    def lowerLookUpTableSize(self) -> int:
-        return self._lowerLookUpTableSize
-    
-    @lowerLookUpTableSize.setter
-    def lowerLookUpTableSize(self, value: int):
-        self._lowerLookUpTableSize = value
-        self.lowerLookUpTableSizeChanged.emit(value)
+    @Property(int)
+    def minInteropSize(self) -> int:
+        return self._interpolation.minInteropSize()
 
-    @Property(int, notify=upperLookUpTableSizeChanged)
-    def upperLookUpTableSize(self) -> int:
-        return self._upperLookUpTableSize
+    @Property(int)
+    def maxInteropSize(self) -> int:
+        return self._interpolation.maxInteropSize()
+
+    @Property(int, notify=lowerInteropSizeChanged)
+    def lowerInteropSize(self) -> int:
+        return self._lowerInteropSize
     
-    @upperLookUpTableSize.setter
-    def upperLookUpTableSize(self, value: int):
-        self._upperLookUpTableSize = value
-        self.upperLookUpTableSizeChanged.emit(value)
+    @lowerInteropSize.setter
+    def lowerInteropSize(self, value: int):
+        self._lowerInteropSize = value
+        self.lowerInteropSizeChanged.emit(value)
+
+    @Property(int, notify=upperInteropSizeChanged)
+    def upperInteropSize(self) -> int:
+        return self._upperInteropSize
+    
+    @upperInteropSize.setter
+    def upperInteropSize(self, value: int):
+        self._upperInteropSize = value
+        self.upperInteropSizeChanged.emit(value)
 
     @Property(str, notify=lookUpTableChanged)
     def lookUpTable(self) -> str:
@@ -77,9 +85,14 @@ class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
 
     @Slot()
     def interpolate(self):
+        if (not self._currDataObjects or len(self._currDataObjects) < 1):
+            raise Exception("No data yet loaded.")
+        lengths = [len(dataObject.data) for dataObject in self._currDataObjects]
+        if (not all(length == lengths[0] for length in lengths)):
+            raise Exception("Read data has different x-value lengths. Algorithm can only handle data with equal length.")
         itp = self._interpolation.calculate(self._currDataObjects, 
-            self._lowerLookUpTableSize, 
-            self._upperLookUpTableSize)
+            self._lowerInteropSize, 
+            self._upperInteropSize)
         self.__update(itp)
 
     @Slot()
@@ -97,7 +110,7 @@ class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
 
     # Update View
     # QAbstractTableModel implementation
-    
+
     displayRole = Qt.UserRole + 1
 
     def roleNames(self):

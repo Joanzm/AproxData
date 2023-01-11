@@ -25,9 +25,21 @@ class LinearInterpolation(IInterpolation):
         super().__init__()
         self._dataMatrix = np.zeros(0)
         self._arrayAverage = np.zeros(0)
-        self._headers = ['Size', 'Avg Deviation', 'Max Deviation']
+        self._headers = ['Points', 'Avg Deviation', 'Max Deviation']
         self._interopValues = dict[int, np.ndarray]()
         self._averageDataMatrices = dict[int, np.ndarray]()
+
+    def minInteropSize(self) -> int:
+        return 2
+
+    def maxInteropSize(self) -> int:
+        return 150
+
+    def defaultLowerInteropSize(self) -> int:
+        return 2
+    
+    def defaultUpperInteropSize(self) -> int:
+        return 20
 
     def headers(self) -> List:
         return self._headers
@@ -36,8 +48,10 @@ class LinearInterpolation(IInterpolation):
         dataObjects: List[OcvSocCellData], 
         lowerLookUpTableLimit: int, 
         upperLookUpTableLimit: int) -> List:
-            results = []
+            if (len(dataObjects[0].data) - 1 < upperLookUpTableLimit):
+                raise Exception("The upper value is bigger than the amount of data x-values. Upper value must be lower than {max}.".format(max = len(dataObjects[0].data)))
 
+            results = []
             self._dataMatrix = _createNumpyDataMatrix(dataObjects)
             self._arrayAverage = self._dataMatrix.mean(axis=2)
             for i in range(lowerLookUpTableLimit, upperLookUpTableLimit + 1):
@@ -152,6 +166,18 @@ class PolyfitInterpolation(IInterpolation):
         self._headers = ['Degree', 'Avg Deviation', 'Max Deviation']
         self._interopValues = dict[int, np.poly1d]()
         self._averageDataMatrices = dict[int, np.ndarray]()
+
+    def minInteropSize(self) -> int:
+        return 1
+
+    def maxInteropSize(self) -> int:
+        return 20
+    
+    def defaultLowerInteropSize(self) -> int:
+        return 2
+
+    def defaultUpperInteropSize(self) -> int:
+        return 15
 
     def headers(self) -> List:
         return self._headers

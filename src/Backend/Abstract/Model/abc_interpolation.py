@@ -6,8 +6,16 @@ from Backend.Abstract.Model.abc_data import AbcData
 class IInterpolation(metaclass=ABCMeta):
     @classmethod
     def __subclasshook__(cls, subclass):
-        return (hasattr(subclass, 'headers') and 
-                callable(subclass.headers) and 
+        return (hasattr(subclass, 'maxInteropSize') and 
+                callable(subclass.maxInteropSize) or 
+                hasattr(subclass, 'minInteropSize') and 
+                callable(subclass.minInteropSize) or 
+                hasattr(subclass, 'defaultUpperInteropSize') and 
+                callable(subclass.defaultUpperInteropSize) or 
+                hasattr(subclass, 'defaultLowerInteropSize') and 
+                callable(subclass.defaultLowerInteropSize) or 
+                hasattr(subclass, 'headers') and 
+                callable(subclass.headers) or 
                 hasattr(subclass, 'calculate') and 
                 callable(subclass.calculate) or 
                 hasattr(subclass, 'getAverageDeviation') and 
@@ -29,6 +37,22 @@ class IInterpolation(metaclass=ABCMeta):
                 hasattr(subclass, 'list_getInterpolationPoints') and 
                 callable(subclass.list_getInterpolationPoints) or 
                 NotImplemented)
+
+    @abstractmethod
+    def maxInteropSize(self) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def minInteropSize(self) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def defaultUpperInteropSize(self) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def defaultLowerInteropSize(self) -> int:
+        raise NotImplementedError
 
     @abstractmethod
     def headers(self) -> List:
