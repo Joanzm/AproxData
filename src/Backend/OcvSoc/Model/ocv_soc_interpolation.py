@@ -28,6 +28,7 @@ class LinearInterpolation(IInterpolation):
         self._headers = ['Points', 'Avg Deviation', 'Max Deviation']
         self._interopValues = dict[int, np.ndarray]()
         self._averageDataMatrices = dict[int, np.ndarray]()
+        self._deviations = dict[int, List[float]]()
 
     def minInteropSize(self) -> int:
         return 2
@@ -50,23 +51,23 @@ class LinearInterpolation(IInterpolation):
         upperLookUpTableLimit: int) -> List:
             if (len(dataObjects[0].data) < upperLookUpTableLimit):
                 raise Exception("The upper value is bigger than the amount of data x-values. Upper value must be lower than {max}.".format(max = len(dataObjects[0].data)) + 1)
-
             results = []
             self._dataMatrix = _createNumpyDataMatrix(dataObjects)
             self._arrayAverage = self._dataMatrix.mean(axis=2)
             for i in range(lowerLookUpTableLimit, upperLookUpTableLimit + 1):
-                self._calculate2dLinear(i)
+                self._calculate1dLinear(i)
+                self._calculateDeviations(i)
                 results.append(i)
             return results
 
     def getAverageDeviation(self, id: int) -> float:
-        return np.float32(np.average(np.absolute(self._arrayAverage[:, 1] - self._averageDataMatrices[id][:, 1]), axis=0)).item()
+        return self._deviations[id][0] # 0 => Average
 
     def getMinDeviation(self, id: int) -> float:
-        return np.float32(np.min(np.absolute(self._arrayAverage[:, 1] - self._averageDataMatrices[id][:, 1]), axis=0)).item()
+        return self._deviations[id][1] # 1 => Minimum
 
     def getMaxDeviation(self, id: int) -> float:
-        return np.float32(np.max(np.absolute(self._arrayAverage[:, 1] - self._averageDataMatrices[id][:, 1]), axis=0)).item()
+        return self._deviations[id][2] # 2 => Maximum
 
     def getAverageData(self) -> np.ndarray:
         return self._arrayAverage
@@ -86,14 +87,29 @@ class LinearInterpolation(IInterpolation):
             npxValues = self._arrayAverage[:,0]
         else:
             npxValues = np.array(xValues)
-        
-        npyValues = np.zeros(len(npxValues))
+        return self._getInterpolationPointsNP(id, npxValues)
+
+    def list_getInterpolationPoints(self, id: int, xValues: List[int] = []) -> List:
+        return self.getInterpolationPoints(id, xValues).tolist()      
+
+    def _getInterpolationPointsNP(self, id: int, npxValues: np.ndarray) -> np.ndarray:
+        npyValues = self._getYInterpolationValuesNP(id, npxValues)
+        points = np.arange(2 * len(npxValues), dtype=np.float32).reshape(len(npxValues), 2)
+        points[:,0] = npxValues
+        points[:,1] = npyValues
+        return points
+
+    def _getYInterpolationValuesNP(self, id: int, npxValues: np.ndarray) -> np.ndarray:
+        npyValues = np.zeros(npxValues.shape)
+
         # Calculate yValues for all x values lower than the lowest bound of the look up table
         lutValue = self._interopValues[id][0,0]
         lutFactor = self._interopValues[id][0,1]
         lutOffset = self._interopValues[id][0,2]
         cond = (npxValues < lutValue)
-        npyValues = npyValues + (lutFactor * npxValues + lutOffset) * cond
+        npyValues = npyValues + (lutFactor * npxValues + lutOffset) * cond[:,]
+
+        # Calculate all values in between
         for i in range(0, len(self._interopValues[id][:,0])-1):
             lutValue = self._interopValues[id][i,0]
             lutValueNext = self._interopValues[id][i+1,0]
@@ -101,22 +117,16 @@ class LinearInterpolation(IInterpolation):
             lutOffset = self._interopValues[id][i,2]
             cond = (npxValues >= lutValue) & (npxValues < lutValueNext)
             npyValues = npyValues + (lutFactor * npxValues + lutOffset) * cond
+
         # Calculate yValues for all x values greater than the upper bound of the look up table
         lutValue = self._interopValues[id][-1,0]
         lutFactor = self._interopValues[id][-1,1]
         lutOffset = self._interopValues[id][-1,2]
-        cond = (npxValues >= lutValue)
-        npyValues = npyValues + (lutFactor * npxValues + lutOffset) * cond
-        
-        points = np.arange(2 * len(npxValues), dtype=np.float32).reshape(len(npxValues), 2)
-        points[:,0] = npxValues
-        points[:,1] = npyValues
-        return points
+        cond = (npxValues >= lutValue)  
 
-    def list_getInterpolationPoints(self, id: int, xValues: List[int] = []) -> List:
-        return self.getInterpolationPoints(id, xValues).tolist()
+        return npyValues + (lutFactor * npxValues + lutOffset) * cond
 
-    def _calculate2dLinear(self, id: int):
+    def _calculate1dLinear(self, id: int):
         """
         Calcualtes the linear interpolation (factor and offset values) for a given @lookUpTableSize
         @arrAverage: The average measure data.
@@ -157,6 +167,15 @@ class LinearInterpolation(IInterpolation):
         # the measure data to get the look up table for the given lookUpTableSize.
         return np.round(np.linspace(0, maxValue, count, dtype=np.int64), 0)
 
+    def _calculateDeviations(self, id: int):
+        """Calculate deviations: [0] Average; [1] Minimum; [2] Maximum"""
+        calcYValues = self._getYInterpolationValuesNP(id, self._dataMatrix[:,0])
+        currDeviation = [-1.0, -1.0, -1.0]
+        currDeviation[0] = np.float32(np.average(np.abs(calcYValues - self._dataMatrix[:, 1]))).item()
+        currDeviation[1] = np.float32(np.min(np.abs(calcYValues - self._dataMatrix[:, 1]))).item()
+        currDeviation[2] = np.float32(np.max(np.abs(calcYValues - self._dataMatrix[:, 1]))).item()
+        self._deviations[id] = currDeviation
+
 class PolyfitInterpolation(IInterpolation):
 
     def __init__(self) -> None:
@@ -166,6 +185,7 @@ class PolyfitInterpolation(IInterpolation):
         self._headers = ['Degree', 'Avg Deviation', 'Max Deviation']
         self._interopValues = dict[int, np.poly1d]()
         self._averageDataMatrices = dict[int, np.ndarray]()
+        self._deviations = dict[int, List[float]]()
 
     def minInteropSize(self) -> int:
         return 1
@@ -190,26 +210,19 @@ class PolyfitInterpolation(IInterpolation):
             self._dataMatrix = _createNumpyDataMatrix(dataObjects)
             self._arrayAverage = self._dataMatrix.mean(axis=2)
             for i in range(lowerLookUpTableLimit, upperLookUpTableLimit + 1):
-                xValues = self._arrayAverage[:,0]
-                yValues = self._arrayAverage[:,1]
-                p = np.poly1d(np.polyfit(xValues, yValues, i))
-                calcYValues = p(xValues)
-                calcData = np.arange(2 * len(xValues), dtype=np.float32).reshape(len(xValues), 2)
-                calcData[:,0] = xValues
-                calcData[:,1] = calcYValues
-                self._averageDataMatrices[i] = calcData
-                self._interopValues[i] = p
+                self._calculateCoefficients(i)
+                self._calculateDeviations(i)
                 results.append(i)
             return results
 
     def getAverageDeviation(self, id: int) -> float:
-        return np.float32(np.average(np.absolute(self._arrayAverage[:, 1] - self._averageDataMatrices[id][:, 1]), axis=0)).item()
+        return self._deviations[id][0] # 0 => Average
 
     def getMinDeviation(self, id: int) -> float:
-        return np.float32(np.min(np.absolute(self._arrayAverage[:, 1] - self._averageDataMatrices[id][:, 1]), axis=0)).item()
+        return self._deviations[id][1] # 1 => Minimum
 
     def getMaxDeviation(self, id: int) -> float:
-        return np.float32(np.max(np.absolute(self._arrayAverage[:, 1] - self._averageDataMatrices[id][:, 1]), axis=0)).item()
+        return self._deviations[id][2] # 2 => Maximum
 
     def getAverageData(self) -> np.ndarray:
         return self._arrayAverage
@@ -229,14 +242,40 @@ class PolyfitInterpolation(IInterpolation):
             npxValues = self._arrayAverage[:,0]
         else:
             npxValues = np.array(xValues)
-        npyValues = self._interopValues[id](npxValues)
+        return self._getInterpolationPointsNP(id, npxValues)
+
+    def list_getInterpolationPoints(self, id: int, xValues: List[int] = []) -> List:
+        return self.getInterpolationPoints(id, xValues).tolist()
+
+    def _getInterpolationPointsNP(self, id: int, npxValues: np.ndarray) -> np.ndarray:
+        npyValues = self._getYInterpolationValuesNP(id, npxValues)
         points = np.arange(2 * len(npxValues), dtype=np.float32).reshape(len(npxValues), 2)
         points[:,0] = npxValues
         points[:,1] = npyValues
         return points
 
-    def list_getInterpolationPoints(self, id: int, xValues: List[int] = []) -> List:
-        return self.getInterpolationPoints(id, xValues).tolist()
+    def _getYInterpolationValuesNP(self, id: int, npxValues: np.ndarray) -> np.ndarray:
+        return self._interopValues[id](npxValues)
+
+    def _calculateCoefficients(self, id: int):
+        xValues = self._arrayAverage[:,0]
+        yValues = self._arrayAverage[:,1]
+        p = np.poly1d(np.polyfit(xValues, yValues, id))
+        calcYValues = p(xValues)
+        calcData = np.arange(2 * len(xValues), dtype=np.float32).reshape(len(xValues), 2)
+        calcData[:,0] = xValues
+        calcData[:,1] = calcYValues
+        self._averageDataMatrices[id] = calcData
+        self._interopValues[id] = p
+
+    def _calculateDeviations(self, id: int):
+        """Calculate deviations: [0] Average; [1] Minimum; [2] Maximum"""
+        calcYValues = self._getYInterpolationValuesNP(id, self._dataMatrix[:,0])
+        currDeviation = [-1.0, -1.0, -1.0]
+        currDeviation[0] = np.float32(np.average(np.abs(calcYValues - self._dataMatrix[:, 1]))).item()
+        currDeviation[1] = np.float32(np.min(np.abs(calcYValues - self._dataMatrix[:, 1]))).item()
+        currDeviation[2] = np.float32(np.max(np.abs(calcYValues - self._dataMatrix[:, 1]))).item()
+        self._deviations[id] = currDeviation
 
     
             
