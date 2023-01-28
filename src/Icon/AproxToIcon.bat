@@ -1,0 +1,1 @@
+call ToIcon "AproxIcon.svg"
