@@ -11,7 +11,7 @@ ApplicationWindow {
     id: page
     visible: true
     width: 1200; height: 800
-    title: "Cell Data Analyzer"
+    title: "AproxData"
     property QtObject mainmodel: CellDataAnalyzerViewModel{ }
 
     menuBar: MenuBar {
