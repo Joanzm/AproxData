@@ -2,9 +2,9 @@ from PySide6.QtCore import Qt, QObject, Signal, QModelIndex, QPersistentModelInd
 from abc import abstractmethod
 from typing import List, Union
 
-from Backend.Abstract.Model.abc_data import AbcData
-from Backend.Abstract.Model.abc_interpolation import IInterpolation
-from Backend.Abstract.ViewModel.abc_vmBase import AbcVmBaseChanges, AbcVmTable
+from ...Abstract.Model.abc_data import AbcData
+from ...Abstract.Model.abc_interpolation import IInterpolation
+from ...Abstract.ViewModel.abc_vmBase import AbcVmBaseChanges, AbcVmTable
 
 class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
 

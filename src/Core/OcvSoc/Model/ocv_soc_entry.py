@@ -1,6 +1,6 @@
 from PySide6.QtCore import QPointF, Signal, Property
 
-from Backend.Abstract.Model.abc_entry import AbcEntry
+from ...Abstract.Model.abc_entry import AbcEntry
 
 class OcvSocEntry(AbcEntry):
     """

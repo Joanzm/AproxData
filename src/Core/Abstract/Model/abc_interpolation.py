@@ -1,7 +1,7 @@
 from numpy import ndarray
 from typing import List
 from abc import ABCMeta, abstractmethod
-from Backend.Abstract.Model.abc_data import AbcData
+from ...Abstract.Model.abc_data import AbcData
 
 class IInterpolation(metaclass=ABCMeta):
     @classmethod

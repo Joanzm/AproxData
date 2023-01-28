@@ -1,7 +1,7 @@
 from typing import List
 from PySide6.QtCore import QThread, Signal, Slot, QObject
 
-from Backend.OcvSoc.Model.ocv_soc_celldataparser_xlr import XlrParser
+from ...OcvSoc.Model.ocv_soc_celldataparser_xlr import XlrParser
 
 class OcvSocFileRunner(QObject):
 

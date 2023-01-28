@@ -1,8 +1,8 @@
 from PySide6.QtCore import Qt, QModelIndex, QPersistentModelIndex
 from typing import Union, List
 
-from Backend.Abstract.Model.abc_data import AbcData
-from Backend.Abstract.ViewModel.abc_vmDataTable import AbcDataTable
+from ...Abstract.Model.abc_data import AbcData
+from ...Abstract.ViewModel.abc_vmDataTable import AbcDataTable
 
 class OcvSocCellDataTable(AbcDataTable):
 

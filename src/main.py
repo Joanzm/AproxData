@@ -4,11 +4,11 @@ from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQml import qmlRegisterType
 
-from Backend.main_vm import CellDataAnalyzerViewModel, OcvSocDataListViewModel, OcvSocCellDataTable, OcvSocCellDataGraph, AbcVmInterpolation
+from Core.main_vm import CellDataAnalyzerViewModel, OcvSocDataListViewModel, OcvSocCellDataTable, OcvSocCellDataGraph, AbcVmInterpolation
 
-from Backend.Abstract.Model.abc_data import AbcData
-from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
-from Backend.OcvSoc.Model.ocv_soc_entry import OcvSocEntry
+from Core.Abstract.Model.abc_data import AbcData
+from Core.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
+from Core.OcvSoc.Model.ocv_soc_entry import OcvSocEntry
 
 if __name__ == "__main__":
     """
