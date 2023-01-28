@@ -1,5 +1,5 @@
 from .ocv_soc_entry import OcvSocEntry
-from Backend.Abstract.Model.abc_data import AbcData
+from ...Abstract.Model.abc_data import AbcData
 
 class OcvSocCellData(AbcData[OcvSocEntry]):
 

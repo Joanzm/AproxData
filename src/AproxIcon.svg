@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 67.733334 67.733333"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="AproxIcon.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2.1089995"
+     inkscape:cx="158.84309"
+     inkscape:cy="110.95308"
+     inkscape:window-width="1904"
+     inkscape:window-height="1001"
+     inkscape:window-x="156"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient1094">
+      <stop
+         style="stop-color:#2ca923;stop-opacity:0.29838711;"
+         offset="0"
+         id="stop1090" />
+      <stop
+         style="stop-color:#a97923;stop-opacity:0.9327957;"
+         offset="1"
+         id="stop1092" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1094"
+       id="radialGradient1096"
+       cx="33.843424"
+       cy="34.394797"
+       fx="33.843424"
+       fy="34.394797"
+       r="32.071152"
+       gradientTransform="matrix(1,0,0,0.98072934,0,0.66281058)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       sodipodi:type="spiral"
+       style="fill:url(#radialGradient1096);fill-rule:nonzero;stroke:#000000;stroke-width:0.264583;fill-opacity:1"
+       id="path986"
+       sodipodi:cx="30.234516"
+       sodipodi:cy="34.876331"
+       sodipodi:expansion="3"
+       sodipodi:revolution="7.0016875"
+       sodipodi:radius="37.992077"
+       sodipodi:argument="-43.044426"
+       sodipodi:t0="0"
+       d="m 30.234516,34.876331 c 3.6e-4,4.91e-4 -0.0013,0.001 -0.0014,0.001 -0.006,9.05e-4 -0.0075,-0.0082 -0.0068,-0.01218 0.0036,-0.02016 0.03059,-0.02239 0.04583,-0.01646 0.046,0.01789 0.04792,0.07941 0.02782,0.116865 -0.04651,0.08669 -0.165801,0.08636 -0.239776,0.03863 -0.145539,-0.0939 -0.140039,-0.300914 -0.04666,-0.429072 0.164611,-0.22591 0.495893,-0.211299 0.699257,-0.04968 0.331148,0.263171 0.302465,0.761891 0.04547,1.064836 -0.394136,0.464602 -1.110067,0.415871 -1.540314,0.03179 -0.629618,-0.562059 -0.553846,-1.551579 -0.0064,-2.140193 0.771496,-0.829544 2.097588,-0.718722 2.878981,0.03287 1.067723,1.027003 0.912827,2.759254 -0.08831,3.77118 -1.333137,1.347502 -3.547737,1.138492 -4.831295,-0.162133 -1.672222,-1.694457 -1.398046,-4.474198 0.256563,-6.073833 2.115517,-2.045229 5.549797,-1.693816 7.513294,0.37383 2.469868,2.600878 2.028135,6.785696 -0.516163,9.164186 -3.155094,2.949482 -8.193055,2.403329 -11.041012,-0.68579 -3.487413,-3.782725 -2.821728,-9.783036 0.884942,-13.158277 4.488328,-4.087007 11.566799,-3.285661 15.530485,1.115846 4.751608,5.276459 3.797457,13.555505 -1.380731,18.172141 C 32.266617,51.516462 22.65798,50.39135 17.320545,44.350079 11.031346,37.231537 12.346593,26.157687 19.341906,20.028262 27.523514,12.859385 40.2048,14.384953 47.20075,22.429826 55.327686,31.775259 53.570594,46.21281 44.376087,54.153163 33.761511,63.319883 17.412264,61.30905 8.4462856,50.860275 -1.8452839,38.866682 0.44252091,20.443705 12.254753,10.367535 25.741796,-1.1372952 46.407142,1.451728 57.681412,14.741166 c 12.809845,15.099483 9.894343,38.182438 -4.990606,50.74606 -0.102813,0.08678 -0.206087,0.173013 -0.309816,0.258695" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:82.0196px;font-family:'Segoe UI Symbol';-inkscape-font-specification:'Segoe UI Symbol';fill:#a6a923;fill-opacity:1;stroke:#000000;stroke-width:0.427186"
+       x="7.7573452"
+       y="59.028042"
+       id="text960"
+       transform="scale(0.88576329,1.1289698)"><tspan
+         sodipodi:role="line"
+         id="tspan958"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:82.0196px;font-family:'Segoe UI Symbol';-inkscape-font-specification:'Segoe UI Symbol';fill:#a6a923;fill-opacity:1;stroke:#000000;stroke-width:0.427186"
+         x="7.7573452"
+         y="59.028042">A</tspan></text>
+  </g>
+</svg>

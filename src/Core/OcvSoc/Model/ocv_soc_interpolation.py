@@ -1,7 +1,7 @@
 import numpy as np
 from typing import List
-from Backend.Abstract.Model.abc_interpolation import IInterpolation
-from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
+from ...Abstract.Model.abc_interpolation import IInterpolation
+from .ocv_soc_celldata import OcvSocCellData
 
 def _createNumpyDataMatrix(dataObjects: List[OcvSocCellData]) -> np.ndarray:
     """

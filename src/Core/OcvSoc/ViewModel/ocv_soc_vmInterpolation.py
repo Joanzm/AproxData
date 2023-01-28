@@ -1,7 +1,7 @@
 from PySide6.QtCore import Slot
 
-from Backend.OcvSoc.Model.ocv_soc_interpolation import LinearInterpolation, PolyfitInterpolation
-from Backend.Abstract.ViewModel.abc_vmInterpolation import AbcVmInterpolation
+from ..Model.ocv_soc_interpolation import LinearInterpolation, PolyfitInterpolation
+from ...Abstract.ViewModel.abc_vmInterpolation import AbcVmInterpolation
 
 class Vm2DInterpolation(AbcVmInterpolation):
 

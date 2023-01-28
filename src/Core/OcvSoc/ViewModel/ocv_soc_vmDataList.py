@@ -3,10 +3,10 @@ import numpy as np
 from PySide6.QtCore import Property, Signal, Property, Slot, QUrl
 from typing import List
 
-from Backend.Abstract.Model.abc_data import AbcData, ProcessState
+from ...Abstract.Model.abc_data import AbcData, ProcessState
 
-from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
-from Backend.Abstract.ViewModel.abc_vmDataList import AbcDataList
+from ..Model.ocv_soc_celldata import OcvSocCellData
+from ...Abstract.ViewModel.abc_vmDataList import AbcDataList
 
 class OcvSocDataListViewModel(AbcDataList[OcvSocCellData]):
     

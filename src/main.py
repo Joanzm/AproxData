@@ -1,20 +1,23 @@
 import sys
 
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQml import qmlRegisterType
 
-from Backend.main_vm import CellDataAnalyzerViewModel, OcvSocDataListViewModel, OcvSocCellDataTable, OcvSocCellDataGraph, AbcVmInterpolation
+from Core.main_vm import CellDataAnalyzerViewModel, OcvSocDataListViewModel, OcvSocCellDataTable, OcvSocCellDataGraph, AbcVmInterpolation
 
-from Backend.Abstract.Model.abc_data import AbcData
-from Backend.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
-from Backend.OcvSoc.Model.ocv_soc_entry import OcvSocEntry
+from Core.Abstract.Model.abc_data import AbcData
+from Core.OcvSoc.Model.ocv_soc_celldata import OcvSocCellData
+from Core.OcvSoc.Model.ocv_soc_entry import OcvSocEntry
 
 if __name__ == "__main__":
     """
     Starts the QT GUI via PySide6
     """
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon("src/View/AproxIcon.ico"))
+
     qmlRegisterType(CellDataAnalyzerViewModel, 'CellDataAnalyzerViewModel', 1, 0, 'CellDataAnalyzerViewModel')
     qmlRegisterType(OcvSocDataListViewModel, 'OcvSocDataListViewModel', 1, 0, 'OcvSocDataListViewModel')
     qmlRegisterType(OcvSocCellDataTable, 'OcvSocCellDataTable', 1, 0, 'OcvSocCellDataTable')
