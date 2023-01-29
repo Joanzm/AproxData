@@ -1,23 +1,105 @@
 import numpy as np
 from typing import List
-from ...Abstract.Model.abc_interpolation import IInterpolation
-from .ocv_soc_celldata import OcvSocCellData
+from abc import ABCMeta, abstractmethod
+from .aprox_data import DataSet
 
-def _createNumpyDataMatrix(dataObjects: List[OcvSocCellData]) -> np.ndarray:
-    """
-    Insert all PySide model data from @dataObjects into a numpy array.
-    @dataObjects: The current loaded model data.
-    """
-    lenEntries = len(dataObjects[0].data)
-    lenData = len(dataObjects)
+class IInterpolation(metaclass=ABCMeta):
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        return (hasattr(subclass, 'maxInteropSize') and 
+                callable(subclass.maxInteropSize) or 
+                hasattr(subclass, 'minInteropSize') and 
+                callable(subclass.minInteropSize) or 
+                hasattr(subclass, 'defaultUpperInteropSize') and 
+                callable(subclass.defaultUpperInteropSize) or 
+                hasattr(subclass, 'defaultLowerInteropSize') and 
+                callable(subclass.defaultLowerInteropSize) or 
+                hasattr(subclass, 'headers') and 
+                callable(subclass.headers) or 
+                hasattr(subclass, 'calculate') and 
+                callable(subclass.calculate) or 
+                hasattr(subclass, 'getAverageDeviation') and 
+                callable(subclass.getAverageDeviation) or 
+                hasattr(subclass, 'getMinDeviation') and 
+                callable(subclass.getMinDeviation) or 
+                hasattr(subclass, 'getMaxDeviation') and 
+                callable(subclass.getMaxDeviation) or 
+                hasattr(subclass, 'getAverageData') and 
+                callable(subclass.getAverageData) or 
+                hasattr(subclass, 'list_getAverageData') and 
+                callable(subclass.list_getAverageData) or 
+                hasattr(subclass, 'getAlgorithmResultData') and 
+                callable(subclass.getAlgorithmResultData) or 
+                hasattr(subclass, 'str_getAlgorithmResultData') and 
+                callable(subclass.str_getAlgorithmResultData) or 
+                hasattr(subclass, 'getInterpolationPoints') and 
+                callable(subclass.getInterpolationPoints) or 
+                hasattr(subclass, 'list_getInterpolationPoints') and 
+                callable(subclass.list_getInterpolationPoints) or 
+                NotImplemented)
 
-    #Create and fill array with all data
-    arr = np.arange(lenEntries * 2 * lenData, dtype=np.float32)
-    for i in range(lenEntries):
-        for j in range(lenData):
-            arr[2 * i * lenData + j] = dataObjects[j].data[i].voltage
-            arr[2 * i * lenData + j + lenData] = dataObjects[j].data[i].soc
-    return arr.reshape((lenEntries, 2, lenData))
+    @abstractmethod
+    def maxInteropSize(self) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def minInteropSize(self) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def defaultUpperInteropSize(self) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def defaultLowerInteropSize(self) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def headers(self) -> List:
+        raise NotImplementedError
+
+    @abstractmethod
+    def calculate(self, 
+        dataObjects: List[DataSet], 
+        lowerLookUpTableLimit: int, 
+        upperLookUpTableLimit: int) -> List:
+            raise NotImplementedError
+
+    @abstractmethod
+    def getAverageDeviation(self, id: int) -> float:
+        raise NotImplementedError
+
+    @abstractmethod
+    def getMinDeviation(self, id: int) -> float:
+        raise NotImplementedError
+
+    @abstractmethod
+    def getMaxDeviation(self, id: int) -> float:
+        raise NotImplementedError
+
+    @abstractmethod
+    def getAverageData(self) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_getAverageData(self) -> List:
+        raise NotImplementedError
+
+    @abstractmethod
+    def getAlgorithmResultData(self, id: int) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def str_getAlgorithmResultData(self, id: int) -> str:
+        raise NotImplementedError
+
+    @abstractmethod
+    def getInterpolationPoints(self, id: int, xValues: List[int] = []) -> np.ndarray:
+        raise NotImplementedError
+
+    @abstractmethod
+    def list_getInterpolationPoints(self, id: int, xValues: List[int] = []) -> List:
+        raise NotImplementedError
 
 class LinearInterpolation(IInterpolation):
 
@@ -46,13 +128,13 @@ class LinearInterpolation(IInterpolation):
         return self._headers
 
     def calculate(self, 
-        dataObjects: List[OcvSocCellData], 
+        dataObjects: List[DataSet], 
         lowerLookUpTableLimit: int, 
         upperLookUpTableLimit: int) -> List:
-            if (len(dataObjects[0].data) < upperLookUpTableLimit):
-                raise Exception("The upper value is bigger than the amount of data x-values. Upper value must be lower than {max}.".format(max = len(dataObjects[0].data)) + 1)
+            if (len(dataObjects[0]) < upperLookUpTableLimit):
+                raise Exception("The upper value is bigger than the amount of data x-values. Upper value must be lower than {max}.".format(max = len(dataObjects[0])) + 1)
             results = []
-            self._dataMatrix = _createNumpyDataMatrix(dataObjects)
+            self._dataMatrix = CreateNumpyDataMatrix(dataObjects)
             self._arrayAverage = self._dataMatrix.mean(axis=2)
             for i in range(lowerLookUpTableLimit, upperLookUpTableLimit + 1):
                 self._calculate1dLinear(i)
@@ -203,11 +285,11 @@ class PolyfitInterpolation(IInterpolation):
         return self._headers
 
     def calculate(self, 
-        dataObjects: List[OcvSocCellData], 
+        dataObjects: List[DataSet], 
         lowerLookUpTableLimit: int, 
         upperLookUpTableLimit: int) -> List:
             results = []
-            self._dataMatrix = _createNumpyDataMatrix(dataObjects)
+            self._dataMatrix = CreateNumpyDataMatrix(dataObjects)
             self._arrayAverage = self._dataMatrix.mean(axis=2)
             for i in range(lowerLookUpTableLimit, upperLookUpTableLimit + 1):
                 self._calculateCoefficients(i)
@@ -277,6 +359,18 @@ class PolyfitInterpolation(IInterpolation):
         currDeviation[2] = np.float32(np.max(np.abs(calcYValues - self._dataMatrix[:, 1]))).item()
         self._deviations[id] = currDeviation
 
-    
-            
+def CreateNumpyDataMatrix(dataObjects: List[DataSet]) -> np.ndarray:
+    """
+    Insert all PySide model data from @dataObjects into a numpy array.
+    @dataObjects: The current loaded model data.
+    """
+    lenEntries = len(dataObjects[0])
+    lenData = len(dataObjects)
 
+    #Create and fill array with all data
+    arr = np.arange(lenEntries * 2 * lenData, dtype=np.float32)
+    for i in range(lenEntries):
+        for j in range(lenData):
+            arr[2 * i * lenData + j] = dataObjects[j][i].x
+            arr[2 * i * lenData + j + lenData] = dataObjects[j][i].y
+    return arr.reshape((lenEntries, 2, lenData))

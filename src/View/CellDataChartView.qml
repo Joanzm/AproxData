@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtCharts
-import OcvSocCellDataGraph 1.0
+import QDataGraph 1.0
 
 Item {
-    property OcvSocCellDataGraph viewModel: null
+    property QDataGraph viewModel: null
 
     Rectangle {
         anchors.fill: parent
@@ -30,13 +30,12 @@ Item {
 
             Connections {
                 target: viewModel
-                function onSeriesAdded(value) { 
+                function onSeriesAdded(key, value) { 
 
-                    var series = cellDataChartView.createSeries(ChartView.SeriesTypeSpline, value.fileInfo.filePath, axisX, axisY);
+                    var series = cellDataChartView.createSeries(ChartView.SeriesTypeSpline, key, axisX, axisY);
 
-                    value.data.forEach(entry => {
-                        var p = entry.point
-                        series.append(p.x, p.y);
+                    value.forEach(entry => {
+                        series.append(entry[0], entry[1]);
                     });
 
                     //Calculate graph min and max value for axis

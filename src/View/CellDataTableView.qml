@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import OcvSocCellDataTable 1.0
+import QDataTable 1.0
 
 TableView {
-    property OcvSocCellDataTable viewModel: null
+    property QDataTable viewModel: null
     id: table
     model: viewModel
     topMargin: columnsHeader.implicitHeight

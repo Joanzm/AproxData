@@ -2,13 +2,10 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
-import OcvSocDataListViewModel 1.0
-import CellEntries 1.0
-import AbcData 1.0
-import OcvSocCellData 1.0
+import QDatasetList 1.0
 
 ColumnLayout {
-    property OcvSocDataListViewModel viewModel: null
+    property QDatasetList viewModel: null
 
     Keys.onPressed: (event) => { 
         if (event.key == Qt.Key_F5) 
@@ -111,7 +108,7 @@ ColumnLayout {
 
                                 Text {
                                     text: "(Reload on F5)"
-                                    visible: _lvItem.ListView.isCurrentItem && viewModel.runnerFinished
+                                    visible: _lvItem.ListView.isCurrentItem && !viewModel.workerRunning
                                 }
                             }
                         }
@@ -121,7 +118,7 @@ ColumnLayout {
                             Layout.minimumWidth: 25
 
                             text: "X"
-                            enabled: viewModel.runnerFinished
+                            enabled: !viewModel.workerRunning
                             onClicked: {
                                 viewModel.removeData(index)
                             }
@@ -145,7 +142,7 @@ ColumnLayout {
 
             id: loadButton
             text: "Load"
-            enabled: viewModel.runnerFinished
+            enabled: !viewModel.workerRunning
             onClicked: {
                 xlsFileDialog.visible = true
             }
@@ -166,7 +163,7 @@ ColumnLayout {
 
             id: clearButton
             text: "Clear"
-            enabled: viewModel.runnerFinished && viewModel.hasData
+            enabled: !viewModel.workerRunning && viewModel.hasData
             onClicked: {
                 if (viewModel.hasData) {
                     yesNoClearDialog.visible = true

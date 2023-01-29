@@ -1,15 +1,9 @@
 from typing import List
 from PySide6.QtCore import Property, Signal, QObject
 
-from .Abstract.ViewModel.abc_vmBase import AbcVmBaseChanges
-from .OcvSoc.ViewModel.ocv_soc_vmDataList import OcvSocDataListViewModel
-
-from .Abstract.ViewModel.abc_vmInterpolation import AbcVmInterpolation
-
-from .OcvSoc.ViewModel.ocv_soc_vmInterpolation import Vm2DInterpolation
-from .OcvSoc.ViewModel.ocv_soc_vmCellDataTable import OcvSocCellDataTable
-from .OcvSoc.ViewModel.ocv_soc_vmCellDataGraph import OcvSocCellDataGraph
-from .OcvSoc.Model.ocv_soc_fileRunnable import OcvSocFileRunner
+from .ViewModel.abc_vmBase import AbcVmBaseChanges
+from .ViewModel.aprox_vmData import QDatasetList, QDataTable, QDataGraph
+from .ViewModel.aprox_vmInterpolation import AbcVmInterpolation, Vm2DInterpolation
 
 class CellDataAnalyzerViewModel(QObject):
 
@@ -24,12 +18,10 @@ class CellDataAnalyzerViewModel(QObject):
     def __init__(self) -> None:
         super().__init__()
         self._title = ""
-        self._runner = OcvSocFileRunner()
-        self._cellDataList = OcvSocDataListViewModel([])
-        self.connectRunnerSignals(self._cellDataList)
-        self._cellDataTable = OcvSocCellDataTable()
+        self._cellDataList = QDatasetList([])
+        self._cellDataTable = QDataTable()
         self.connectVmBaseSignals(self._cellDataTable)
-        self._cellDataGraph = OcvSocCellDataGraph()
+        self._cellDataGraph = QDataGraph()
         self.connectVmBaseSignals(self._cellDataGraph)
         self._interpolation = Vm2DInterpolation()
         self.connectVmBaseSignals(self._interpolation)
@@ -76,13 +68,5 @@ class CellDataAnalyzerViewModel(QObject):
             self._cellDataList.dataChangedSignal.connect(vm.onDataChanged)
             self._cellDataList.selectionChangedSignal.connect(vm.onSelectionChanged)
             self._cellDataList.clearViewSignal.connect(vm.onClearView)
-
-    def connectRunnerSignals(self, vm: OcvSocDataListViewModel):
-        if self._runner and vm:
-            self._runner.runnerStateChanged.connect(vm.onRunnerStateChanged)
-            self._runner.entryStartReading.connect(vm.onRunnerStartReadingFile)
-            self._runner.entryFinishedReading.connect(vm.onRunnerFinishedFile)
-            self._runner.entryFaultedReading.connect(vm.onRunnerFaultedReading)
-            vm.startReading.connect(self._runner.startFileRunner)
 
     

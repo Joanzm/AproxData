@@ -1,10 +1,10 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import CellDataAnalyzerModel 1.0
+import CellDataAnalyzerViewModel 1.0
 
 ColumnLayout {
-    property CellDataAnalyzerModel partModel: null
+    property CellDataAnalyzerViewModel partModel: null
 
     Text {
         text: partModel.selectedValue == null ? "" : qsTr("Filepath: ") + partModel.selectedValue.fileInfo.filepath

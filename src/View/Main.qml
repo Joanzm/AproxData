@@ -1,11 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import CellEntries 1.0
 import CellDataAnalyzerViewModel 1.0
-import AbcData 1.0
-import OcvSocCellData 1.0
-// import Graphing 1.0
 
 ApplicationWindow {
     id: page
@@ -15,7 +11,7 @@ ApplicationWindow {
     property QtObject mainmodel: CellDataAnalyzerViewModel{ }
 
     menuBar: MenuBar {
-        enabled: mainmodel.cellDataList.runnerFinished
+        enabled: !mainmodel.cellDataList.workerRunning
         Menu {
             title: qsTr("File")
             /*MenuItem {

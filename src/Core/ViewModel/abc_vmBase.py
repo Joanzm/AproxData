@@ -1,5 +1,5 @@
 from PySide6.QtCore import Qt, QObject, QAbstractTableModel, QModelIndex, QModelIndex, QPersistentModelIndex, Slot, Property, Signal
-from abc import abstractmethod, ABCMeta
+from abc import abstractmethod
 from typing import Union
 
 class AbcVmBaseChanges():

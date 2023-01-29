@@ -1,20 +1,37 @@
-import xlrd
-import glob
 from typing import List
+from abc import abstractmethod
+import xlrd
 
-class XlrParser:
+class ADataSetParser:
 
-    def __init__(self) -> None:
-        super().__init__()
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        return (hasattr(subclass, 'parse') and 
+                callable(subclass.parse) or 
+                NotImplemented)
+    
+    @property
+    def name(self):
+        return ""
 
-    def load_sheets(self, filename: str) -> List[List[float]]:
+    @abstractmethod
+    def parse(self, key: str) -> List[float]:
+        pass
+
+class CellDatasetParser(ADataSetParser):
+
+    @property
+    def name(self):
+        return "Cell data parser"
+
+    def parse(self, key: str) -> List[float]:
         """Reading all the sheets of the self.book instance (loaded by load_book(...)) for
         the idle capacity voltage pairs and adds them to the cellData two dim array. For all
         files the given idle capacities must be the same or an exception will be thrown."""
 
         #print("Start parsing file " + filename)
-        celldata = []
-        book = xlrd.open_workbook(filename, on_demand=True)
+        data = []
+        book = xlrd.open_workbook(key, on_demand=True)
         reducedCapacity = 0.0 #The current reduced capacity by the cell tester
         pointer = 0 #Current position to fill self.cellData
 
@@ -35,7 +52,7 @@ class XlrParser:
                 #If the current row is the last rest entry before a discharge or charge entry add the previous entry to the self.cellData
                 if (row[2].value == "CCCV_Chg" or row[2].value == "CC_DChg") and prevRow[2].value == "Rest":
                     #print("{:.4f} Ah | {:.4f} V".format(round(reducedCapacity,4), prevRow[5].value))
-                    celldata.append([round(reducedCapacity,4),prevRow[5].value])
+                    data.append([prevRow[5].value, round(reducedCapacity,4)])
                     pointer += 1
                 elif row[2].value == "Rest" and prevRow[2].value == "CC_DChg":
                     reducedCapacity += round(prevRow[7].value,4)
@@ -44,44 +61,11 @@ class XlrParser:
             startIndex = 1 #Skip first row of each sheet
 
         book.release_resources()
-        celldata.reverse()
+        data.reverse()
 
-        if (len(celldata) > 0):
-            highestCapacity = celldata[0][0]
-            for i in range(len(celldata)):
-                celldata[i][0] =  round((highestCapacity - celldata[i][0]) / highestCapacity, 4)
-
-        return celldata
-
-    def get_files(self) -> list[str]:
-        """
-        Returns the list of all available cell data files in the current directory.
-        """
-        return glob.glob("Data/*.xls")
-
-    def parse(self):
-        """
-        Runs a parsing process with the .xls files in the current directory.
-        """
-
-        celldatas = []
-        files = self.get_files()
-        for f in files:
-            celldatas.append(self.load_sheets(f))
-
-        #Switch Capacity values from reduced capacity of the cell tester to remaining capacity of the cell
-        # highestCapacity = reader.cellData[len(reader.cellData)-1][0]
-        # for valRow in reader.cellData:
-        #     valRow[0] = round(highestCapacity - valRow[0], 4)
-        
-        #Writes values to the SOCAlgorithm_CellData.csv file.
-        # print(len(reader.cellData))
-        # f = open("SOCAlgorithm_CellData.csv", 'w', encoding='UTF8', newline='')
-        # writer = csv.writer(f, delimiter=',')
-
-        # header = ["Capacity"]
-        # for f in files:
-        #     header.append("Voltage_" + f)
-        # writer.writerow(header)
-        # writer.writerows(reader.cellData)
-        # f.close()
+        # Convert capacity in mAh to SOC % => first value is highest capacity.
+        if (len(data) > 0):
+            highestCapacity = data[0][1]
+            for i in range(len(data)):
+                data[i][1] = round((highestCapacity - data[i][1]) / highestCapacity, 4)
+        return data

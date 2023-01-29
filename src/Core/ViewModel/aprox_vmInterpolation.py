@@ -2,9 +2,9 @@ from PySide6.QtCore import Qt, QObject, Signal, QModelIndex, QPersistentModelInd
 from abc import abstractmethod
 from typing import List, Union
 
-from ...Abstract.Model.abc_data import AbcData
-from ...Abstract.Model.abc_interpolation import IInterpolation
-from ...Abstract.ViewModel.abc_vmBase import AbcVmBaseChanges, AbcVmTable
+from ..Model.aprox_data import DataSet
+from ..Model.aprox_interpolation import IInterpolation, LinearInterpolation, PolyfitInterpolation
+from .abc_vmBase import AbcVmBaseChanges, AbcVmTable
 
 class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
 
@@ -87,7 +87,7 @@ class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
     def interpolate(self):
         if (not self._currDataObjects or len(self._currDataObjects) < 1):
             raise Exception("No data yet loaded.")
-        lengths = [len(dataObject.data) for dataObject in self._currDataObjects]
+        lengths = [len(dataObject) for dataObject in self._currDataObjects]
         if (not all(length == lengths[0] for length in lengths)):
             raise Exception("Read data has different x-value lengths. Algorithm can only handle data with equal length.")
         itp = self._interpolation.calculate(self._currDataObjects, 
@@ -96,7 +96,7 @@ class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
         self.__update(itp)
 
     @Slot()
-    def onDataChanged(self, dataObjects: List[AbcData], selectedIndex: int):
+    def onDataChanged(self, dataObjects: List[DataSet], selectedIndex: int):
         self._currDataObjects = dataObjects
 
     @Slot()
@@ -166,3 +166,21 @@ class AbcVmInterpolation(AbcVmTable, AbcVmBaseChanges):
         self._data = data
         self.endInsertRows()
         self.dataChanged.emit(self._data)
+
+class Vm2DInterpolation(AbcVmInterpolation):
+
+    def __init__(self) -> None:
+        super().__init__(LinearInterpolation())
+
+    @Slot(str)
+    def changeAlgorithm(self, value: str):
+        self.onClearView()
+        if value == "Linear Interpolation":
+            self._interpolation = LinearInterpolation()
+        if value == "Polyfit Interpolation":
+            self._interpolation = PolyfitInterpolation()
+        
+        if (self._lowerInteropSize < self._interpolation.minInteropSize()):
+            self._lowerInteropSize = self._interpolation.minInteropSize()
+        if (self._upperInteropSize > self._interpolation.maxInteropSize()):
+            self._upperInteropSize = self._interpolation.maxInteropSize()
